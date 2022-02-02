@@ -25,57 +25,66 @@ meanFreePath = vt * tmn;
 fprintf("Mean free path = %d \n", meanFreePath);
 
 %Electron motion (Question 1.C) 
-numElec = 1000; 
-numEPlot = 10; 
-dt = (lArea*wArea); %Typically 1/100 of region size
-stepsTot = 1000; 
-tTot= stepsTot*dt;
-x = zeros(1,numElec);
-y = zeros(1,numElec);
-vx = zeros(1,numElec);
-vy = zeros(1,numElec);
-vtot = zeros(1,numElec);
-colors = rand(numElec,3);
-eTemp=0;
+%Inital Values 
+numElec = 1000;                 %Number of simulated Electrons 
+numEPlot = 10;                  %Number of plotted Electrons 
+dt = (lArea*wArea);             %Typically 1/100 of region size
+stepsTot = 200;                 %Total amount of steps (1000 was a long simulation) 
+tTot= stepsTot*dt;              %Total Simulation time 
+x = zeros(1,numElec);           %Inital X matrix          
+y = zeros(1,numElec);           %Inital y matrix  
+vx = zeros(1,numElec);          %Inital velocity x matrix  
+vy = zeros(1,numElec);          %Inital velocity y matrix
+vtot = zeros(1,numElec);        %Inital velocity matrix
+colors = rand(numElec,3);       %Color assignment for each electron                   
 
-%Electron Graph 
+%Electron Random Assignments
 for cnt = 1:numElec
     x(cnt)=rand()*wArea;
     y(cnt)=rand()*lArea;
     angle = (2*pi*rand());
-    vx(cnt)=sqrt(vt^2 /2)*cos(angle); %(randi([-1,1])); % velocity * random direction   
-    vy(cnt)=sqrt(vt^2 /2)*sin(angle); %(randi([-1,1])); % velocity * random direction
+    vx(cnt)=sqrt(vt^2 /2)*cos(angle);   % velocity * random direction   
+    vy(cnt)=sqrt(vt^2 /2)*sin(angle);   % velocity * random direction
     vtot(cnt)= sqrt (vx(cnt)^2)+(vy(cnt)^2);
-    %elec(cnt) = [x,y,vx,vy,vtot];
 end
 
+%Main Loop
 t=0;
 intCNT = 2;
 while t < tTot
     t = t + dt; 
     
+    %Store old position 
     oldx = x;
     oldy = y;
-
+    
+    %Update to new position 
     x(1:numElec) = x(1:numElec) + (vx(1:numElec).*dt);
     y(1:numElec) = y(1:numElec) + (vy(1:numElec).*dt);
     
     vtot(1:numElec)= sqrt ((vx(1:numElec).^2)+(vy(1:numElec).^2));
-
+    
+    %Apply boundary conditions 
     for check = 1:numElec
+        %If top or bottom contact, bounce off in opposite direction
         if (y(check)<=0 || y(check)>=lArea)
             vy(check) = -vy(check);
-         end
+        end
+        %if left side of box, come out right side 
         if(x(check)<=0)
            x(check) = x(check) + wArea;
         end
+        %if right side of box, come out left side
         if(x(check)>=wArea)
           x(check) = x(check) - wArea;
         end
     end 
 
+    %Plot Boundary and map some electrons
     for Eplot = 1:numEPlot
         subplot (2,1,1)
+        %if the electron went out of sides and back on other side, do not
+        %draw line
         if abs(oldx(Eplot)-x(Eplot))<(wArea/2)
             p = plot([oldx(Eplot),x(Eplot)],[oldy(Eplot),y(Eplot)]);
         end
@@ -87,12 +96,13 @@ while t < tTot
     end 
     pause(0.01);
     
+    %Plot Averge Temprature in the system
     subplot (2,1,2)
     Time(:,intCNT) = t;
     allT = ((vtot(:).^2).*mn)./(kb); %since vector is 1D vtot, do not device by 2*kb
     eTemp(:,intCNT) = mean(allT);
      
-    plot(Time,eTemp);
+    plot(Time,eTemp,"r");
     title('Averge Temp'),xlabel('Time (s)', 'FontSize', 10), ylabel('Temp (K)', 'FontSize', 10), ylim([299,301]); 
     hold on;
     intCNT = intCNT +1; 
