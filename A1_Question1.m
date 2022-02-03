@@ -43,8 +43,8 @@ for cnt = 1:numElec
     x(cnt)=rand()*wArea;
     y(cnt)=rand()*lArea;
     angle = (2*pi*rand());
-    vx(cnt)=sqrt(vt^2 /2)*cos(angle);   % velocity * random direction   
-    vy(cnt)=sqrt(vt^2 /2)*sin(angle);   % velocity * random direction
+    vx(cnt)=sqrt(vt^2)*cos(angle);   % velocity * random direction   
+    vy(cnt)=sqrt(vt^2)*sin(angle);   % velocity * random direction
     vtot(cnt)= sqrt (vx(cnt)^2)+(vy(cnt)^2);
 end
 
@@ -99,11 +99,11 @@ while t < tTot
     %Plot Averge Temprature in the system
     subplot (2,1,2)
     Time(:,intCNT) = t;
-    allT = ((vtot(:).^2).*mn)./(kb); %since vector is 1D vtot, do not device by 2*kb
+    allT = ((vtot(:).^2).*mn)./(2*kb); %since vector is 1D vtot, do not device by 2*kb
     eTemp(:,intCNT) = mean(allT);
      
     plot(Time,eTemp,"r");
-    title('Averge Temp'),xlabel('Time (s)', 'FontSize', 10), ylabel('Temp (K)', 'FontSize', 10), ylim([299,301]); 
+    title('Averge Temp'),xlabel('Time (s)', 'FontSize', 10), ylabel('Temp (K)', 'FontSize', 10);%, ylim([299,301]); 
     hold on;
     intCNT = intCNT +1; 
 
