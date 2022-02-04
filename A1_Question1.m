@@ -103,7 +103,7 @@ while t < tTot
     eTemp(:,intCNT) = mean(allT);
      
     plot(Time,eTemp,"r");
-    title('Averge Temp'),xlabel('Time (s)', 'FontSize', 10), ylabel('Temp (K)', 'FontSize', 10);%, ylim([299,301]); 
+    title('Averge Temp'),xlabel('Time (s)', 'FontSize', 10), ylabel('Temp (K)', 'FontSize', 10), ylim([299,301]); 
     hold on;
     intCNT = intCNT +1; 
 
