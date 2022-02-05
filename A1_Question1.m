@@ -1,20 +1,27 @@
-%%Assignment 1 
+%% Assigment 1 - Simulation 1
+% Basic Electron Modelling - 
 % Jinseng Vanderkloot 101031534
+%% 
+% The purpose of Simulation 1 is to place electrons randomly inside the 
+% designated area. They will all have the same relative velocity but travel
+% in random directions. When they make contact with the top or bottom
+% boundary, they will "bounce" off them and travel in the opposite
+% direction. When they encounter the side walls, the electron will travel
+% from one side to the other to maintain the electron density in the 
+% designated area 
 
+%% Initialization of individual electron values
 clc
-clear all
-close all 
+clear all 
+close all
 
-%Initial (Question 1) 
 m0 = 9.10938215e-31;            % electron mass
 mn = 0.26*m0;                   % Effective mass
 Temp = 300;                     % Inital Temp (K)
 kb = 1.3806504e-23;             % Boltzmann constant
 tmn = 0.2e-12;                  % Mean time between collision 
 
-% Region Area 
-wArea = 200e-9;
-lArea = 100e-9;
+%% vth and MFP
 
 %Thermal Velocity (Question 1.A) 
 vt=sqrt((2*kb*Temp)/mn);        % Sim in 2D so (2*kb*Temp), 3D is (3*kb*Temp)
@@ -24,8 +31,12 @@ fprintf("Thermal Velocity = %d m/s \n", vt);
 meanFreePath = vt * tmn;
 fprintf("Mean free path = %d \n", meanFreePath);
 
-%Electron motion (Question 1.C) 
-%Inital Values 
+%% Electrons position and velocity arrays
+
+% Plotting Area 
+wArea = 200e-9;
+lArea = 100e-9;
+
 numElec = 1000;                 %Number of simulated Electrons 
 numEPlot = 10;                  %Number of plotted Electrons 
 dt = (lArea*wArea);             %Typically 1/100 of region size
@@ -38,7 +49,8 @@ vy = zeros(1,numElec);          %Inital velocity y matrix
 vtot = zeros(1,numElec);        %Inital velocity matrix
 colors = rand(numElec,3);       %Color assignment for each electron                   
 
-%Electron Random Assignments
+
+%% Electron Random Assignments
 for cnt = 1:numElec
     x(cnt)=rand()*wArea;
     y(cnt)=rand()*lArea;
@@ -47,8 +59,8 @@ for cnt = 1:numElec
     vy(cnt)=sqrt(vt^2)*sin(angle);   % velocity * random direction
     vtot(cnt)= sqrt (vx(cnt)^2)+(vy(cnt)^2);
 end
+%% Main Loop 
 
-%Main Loop
 t=0;
 intCNT = 2;
 while t < tTot
@@ -66,8 +78,14 @@ while t < tTot
     
     %Apply boundary conditions 
     for check = 1:numElec
-        %If top or bottom contact, bounce off in opposite direction
-        if (y(check)<=0 || y(check)>=lArea)
+        %If bottom contact, bounce off in opposite direction
+        if (y(check)<=0)
+            y(check) = 0;
+            vy(check) = -vy(check);
+        end
+        %If top contact, bounce off in opposite directio
+        if (y(check)>=lArea)
+            y(check) = lArea;
             vy(check) = -vy(check);
         end
         %if left side of box, come out right side 
@@ -99,7 +117,7 @@ while t < tTot
     %Plot Averge Temprature in the system
     subplot (2,1,2)
     Time(:,intCNT) = t;
-    allT = ((vtot(:).^2).*mn)./(2*kb); %since vector is 1D vtot, do not device by 2*kb
+    allT = ((vtot(:).^2).*mn)./(2*kb);
     eTemp(:,intCNT) = mean(allT);
      
     plot(Time,eTemp,"r");
