@@ -1,5 +1,7 @@
-%%Assignment 1 
+%% Assignment 1 - Simulation 3 - 1
+% Enhancements - 
 % Jinseng Vanderkloot 101031534
+%% Initialization of electron values
 
 clc
 clear all
@@ -19,13 +21,10 @@ lArea = 100e-9;
 %Thermal Velocity (Question 1.A) 
 vt=sqrt((2*kb*Temp)/mn);        % Sim in 2D so (2*kb*Temp), 3D is (3*kb*Temp)
 
-% Mean free path (Velocity * minimum time between collision) (Question 1.B)
-meanFreePath = vt * tmn;
-
 %Electron motion 
-numElec = 400;                 %Number of simulated Electrons 
+numElec = 1000;                  %Number of simulated Electrons 
 numEPlot = 40;                  %Number of plotted Electrons 
-dt = (lArea*wArea)/2;           %Typically 1/100 of region size
+dt = (lArea*wArea);           %Typically 1/100 of region size
 stepsTot = 200;                 %Total amount of steps (1000 was a long simulation) 
 tTot= stepsTot*dt;              %Total Simulation time 
 x = zeros(1,numElec);           %Inital X matrix          
@@ -36,7 +35,7 @@ vtot = zeros(1,numElec);        %Inital velocity matrix
 avgTemp=0;                      %Set average Temp to 0 
 
 %Probability of Scatter 
-scatOn = 0;                     %Turn Scatter on (1) or off(0)
+scatOn = 1;                     %Turn Scatter on (1) or off(0)
 Pscatter = 1-exp(-dt/tmn);      %Scatter Equation 
 tScatter = zeros(1,numElec);
 
@@ -53,6 +52,7 @@ boxY2 = 60e-9;
 for cnt = 1:numElec
     x(cnt)=rand()*wArea;
     y(cnt)=rand()*lArea;
+    %If the electrons are place in the box, re-roll position
     while (x(cnt)>=boxX1 && x(cnt)<=boxX2 && (y(cnt)<=boxY1 || y(cnt>=boxY2))) %Relocate them if in boundary
         x(cnt)=rand()*wArea;
         y(cnt)=rand()*lArea;
@@ -62,41 +62,12 @@ for cnt = 1:numElec
     %Varience = sqrt(kT/m) - Do we use this? 
     vtot(cnt)= sqrt (vx(cnt)^2)+(vy(cnt)^2);
     colors= rand(numElec,3);
-   
 end
 
-
-%Boundary Energy/Velocity loss coefficient
-vloss = 0.99; 
-
-% %Change location of particle if places inside of bottle neck 
-%  for ctt = 1:numElec
-%     if (x(ctt) >= boxX1 && x(ctt) <= boxX2)
-%         if (y(ctt)<= boxY1)
-%             disDir = randi([1 3]); %Randomize which way to displace particle in boundary
-%             if disDir == 1
-%                 x(ctt) = randn()*boxX1; % relocate electron on left side of bottleneck
-%             elseif disDir == 2
-%                 y(ctt) = boxY1 + (randn()*(boxY2-boxY1));
-%             else
-%                 x(ctt) = boxX2 + (randn()*(wArea - boxX2));
-%             end
-%         end 
-%         if (y(ctt)>= boxY2)
-%             disDir = randi([1 3]); %Randomize which way to displace particle in boundary
-%             if disDir == 1
-%                 x(ctt) = randn()*boxX1; % relocate electron on left side of bottleneck
-%             elseif disDir == 2
-%                 y(ctt) = boxY1 + (randn()*(boxY2-boxY1));
-%             else
-%                 x(ctt) = boxX2 + (randn()*(wArea - boxX2));
-%             end
-%         end
-%     end 
-% end
-
-
-%Main Loop
+%Boundary Energy/Velocity loss coefficient (reduction in velocity =
+%reduction in temprature) 
+vloss = 0.95; 
+%% Main Loop 
 t=0;
 intCNT = 1; %Counter with time
 while t < tTot
@@ -110,56 +81,64 @@ while t < tTot
     x(1:numElec) = x(1:numElec) + (vx(1:numElec).*dt);
     y(1:numElec) = y(1:numElec) + (vy(1:numElec).*dt);
     
-    
-    %Check each electron for scratter 
-%     for (scat = 1:numElec)
-%         if Pscatter > rand()
-%             vx(scat)=sqrt(vt^2 /2)*randn();  
-%             vy(scat)=sqrt(vt^2 /2)*randn();
-%             tScatter(scat)= 0; %If collision, time goes to 0
-%         else
-%             tScatter(scat)= tScatter(scat) + dt; %track time increaing while no collision
-%         end
-%     end 
-
     vtot(1:numElec)= sqrt ((vx(1:numElec).^2)+(vy(1:numElec).^2));
-    
-    %Apply boundary conditions 
+
     for check = 1:numElec
-        %If top or bottom contact, bounce off in opposite direction
-        if (y(check)<=0 || y(check)>=lArea)
+        %Scatter 
+        if scatOn==1
+            if Pscatter > rand()
+                vx(check)=sqrt(vt^2 /2)*randn();
+                vy(check)=sqrt(vt^2 /2)*randn();
+                tScatter(check)= 0; %If collision, time goes to 0
+            else
+                tScatter(check)= tScatter(check) + dt; %track time increaing while no collision
+            end
+        end
+
+        %Apply Boundary Conditions 
+        %If bottom contact, bounce off in opposite direction
+        if (y(check)<=0)
+            y(check) = 0;
+            vy(check) = -vy(check);
+        end
+        %If top contact, bounce off in opposite directio
+        if (y(check)>=lArea)
+            y(check) = lArea;
             vy(check) = -vy(check);
         end
         %if left side of box, come out right side 
         if(x(check)<=0)
-           x(check) = x(check) + wArea;
+           x(check) = 0;
+           vx(check) = -vx(check);
         end
         %if right side of box, come out left side
         if(x(check)>=wArea)
-          x(check) = x(check) - wArea;
+           x(check) = wArea;
+           vx(check) = -vx(check);
         end
-    end 
 
-    %Apply bottle neck conditions 
-    for check2 = 1:numElec
+        %Apply bottle neck conditions 
         %If contact on left walls of boundary (not in Gap)
-        if (oldx(check2)<boxX1 && x(check2)>=boxX1 && (y(check2)<= boxY1 || y(check2)>= boxY2))
-            vx(check2) = -(vx(check2)*vloss); 
+        if (oldx(check)<boxX1 && x(check)>=boxX1 && (y(check)<= boxY1 || y(check)>= boxY2))
+            x(check)=boxX1;
+            vx(check) = -(vx(check)*vloss); 
         end
         %If contact on right walls of boundary (not in Gap)
-        if (oldx(check2)>boxX2 && x(check2)<=boxX2 && (y(check2)<= boxY1 || y(check2)>= boxY2))
-            vx(check2) = -(vx(check2)*vloss); 
+        if (oldx(check)>boxX2 && x(check)<=boxX2 && (y(check)<= boxY1 || y(check)>= boxY2))
+            x(check)=boxX2;
+            vx(check) = -(vx(check)*vloss); 
         end
         %If contact with bottom boundary in gap
-        if (x(check2)>boxX1 && x(check2)< boxX2 && oldy(check2)>boxY1 && y(check2)<= boxY1)
-            vy(check2) = -(vy(check2)*vloss); 
+        if (x(check)>boxX1 && x(check)< boxX2 && oldy(check)>boxY1 && y(check)<= boxY1)
+            y(check)= boxY1;
+            vy(check) = -(vy(check)*vloss); 
         end
         %If contact with top boundary in gap 
-        if (x(check2)>boxX1 && x(check2)< boxX2 && oldy(check2)<boxY2 && y(check2)>=boxY2)
-            vy(check2) = -(vy(check2)*vloss); 
+        if (x(check)>boxX1 && x(check)< boxX2 && oldy(check)<boxY2 && y(check)>=boxY2)
+            y(check)=boxY2;
+            vy(check) = -(vy(check)*vloss); 
         end
     end 
-
 
     %Plot Boundary and map some electrons
     for Eplot = 1:numEPlot
@@ -170,8 +149,8 @@ while t < tTot
         if abs(oldx(Eplot)-x(Eplot))<(wArea/2)
             p = plot([oldx(Eplot),x(Eplot)],[oldy(Eplot),y(Eplot)]);
         end
-        rectangle('Position',[boxX1 0 (boxX2-boxX1) boxY1])
-        rectangle('Position',[boxX1 boxY2 (boxX2-boxX1) (lArea-boxY2)])
+        rectangle('Position',[boxX1 0 (boxX2-boxX1) boxY1],'FaceColor',[0 0 0])
+        rectangle('Position',[boxX1 boxY2 (boxX2-boxX1) (lArea-boxY2)],'FaceColor',[0 0 0])
         p.Color=colors(Eplot,:);
         axis([0,wArea,0,lArea]);
         title('Electron Model'), xlabel('Position (m)', 'FontSize', 10), ylabel('Position (m)', 'FontSize', 10);
