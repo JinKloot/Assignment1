@@ -1,5 +1,17 @@
-%%Assignment 1 
+%% Assignment 1 - Simulation 2
+% Collisions with Mean Free Path (MFP)
 % Jinseng Vanderkloot 101031534
+%% 
+%The purpose of this simulation is to allow the electrons to scatter as if
+%making contact with another electron. This is done by randomizing the
+%velocity in x and y when a randomly generated value is less then the
+%probability of scattering. The temperature of the systems is monitored over
+%time as the velocities of the particles will undergo net change. The Mean
+%free path and mean time between collisions is also tracked (about the same
+%but one is distance and the other is time). A histogram is produced to
+%show the distribution of the velocities.
+
+%% Initialization of electron values
 
 clc
 clear all
@@ -19,12 +31,9 @@ lArea = 100e-9;
 %Thermal Velocity (Question 1.A) 
 vt=sqrt((2*kb*Temp)/mn);        % Sim in 2D so (2*kb*Temp), 3D is (3*kb*Temp)
 
-% Mean free path (Velocity * minimum time between collision) (Question 1.B)
-meanFreePath = vt * tmn;
-
-%Electron motion 
+%Electrons position and velocity arrays 
 numElec = 1000;                 %Number of simulated Electrons 
-numEPlot = 10;                  %Number of plotted Electrons 
+numEPlot = 20;                  %Number of plotted Electrons 
 dt = (lArea*wArea);             %Typically 1/100 of region size
 stepsTot = 200;                 %Total amount of steps (1000 was a long simulation) 
 tTot= stepsTot*dt;              %Total Simulation time 
@@ -33,14 +42,14 @@ y = zeros(1,numElec);           %Inital y matrix
 vx = zeros(1,numElec);          %Inital velocity x matrix  
 vy = zeros(1,numElec);          %Inital velocity y matrix
 vtot = zeros(1,numElec);        %Inital velocity matrix
-colors = rand(numElec,3);       %Color assignment for each electro
 avgTemp=0;                      %Set average Temp to 0 
 
 %Probability of Scatter 
+scatOn = 1;                     %Turn Scatter on (1) or off(0)
 Pscatter = 1-exp(-dt/tmn);      %Scatter Equation 
 tScatter = zeros(1,numElec);    %track scatter for each particle 
 
-%Electron Graph 
+%Electron Graph initial
 for cnt = 1:numElec
     x(cnt)=rand()*wArea;
     y(cnt)=rand()*lArea;
@@ -48,9 +57,9 @@ for cnt = 1:numElec
     vy(cnt)=sqrt(vt^2)*randn();  % velocity * Gaussian dist 
     %Varience = sqrt(kT/m) - Do we use this? 
     vtot(cnt)= sqrt (vx(cnt)^2)+(vy(cnt)^2);
+    colors= rand(numElec,3);     %Random Color for each electron 
 end
-
-%Main Loop
+%% Main Loop 
 t=0;
 intCNT = 1; %Counter with time
 while t < tTot
@@ -63,25 +72,31 @@ while t < tTot
     %Update to new position 
     x(1:numElec) = x(1:numElec) + (vx(1:numElec).*dt);
     y(1:numElec) = y(1:numElec) + (vy(1:numElec).*dt);
-    
-    
-    %Check each electron for scratter 
-    for scat = 1:numElec
-        if Pscatter > rand()
-            vx(scat)=sqrt(vt^2 /2)*randn();  
-            vy(scat)=sqrt(vt^2 /2)*randn();
-            tScatter(scat)= 0; %If collision, time goes to 0
-        else
-            tScatter(scat)= tScatter(scat) + dt; %track time increaing while no collision
-        end
-    end 
 
     vtot(1:numElec)= sqrt ((vx(1:numElec).^2)+(vy(1:numElec).^2));
     
-    %Apply boundary conditions 
+ 
     for check = 1:numElec
-        %If top or bottom contact, bounce off in opposite direction
-        if (y(check)<=0 || y(check)>=lArea)
+        %Scatter 
+        if scatOn==1
+            if Pscatter > rand()
+                vx(check)=sqrt(vt^2 /2)*randn();
+                vy(check)=sqrt(vt^2 /2)*randn();
+                tScatter(check)= 0; %If collision, time goes to 0
+            else
+                tScatter(check)= tScatter(check) + dt; %track time increaing while no collision
+            end
+        end
+
+        %Apply boundary conditions 
+        %If bottom contact, bounce off in opposite direction
+        if (y(check)<=0)
+            y(check) = 0;
+            vy(check) = -vy(check);
+        end
+        %If top contact, bounce off in opposite directio
+        if (y(check)>=lArea)
+            y(check) = lArea;
             vy(check) = -vy(check);
         end
         %if left side of box, come out right side 
@@ -114,7 +129,7 @@ while t < tTot
     %Calc Average Temp for all t and Plot 
     subplot (3,1,2)
     Time(:,intCNT) = t;
-    allT = ((vtot(:).^2).*mn)./(2*kb); %since vector is 1D vtot, do not device by 2*kb
+    allT = ((vtot(:).^2).*mn)./(2*kb);
     avgTemp(:,intCNT) = mean(allT);
      
     plot(Time,avgTemp,"r");
@@ -123,9 +138,11 @@ while t < tTot
     intCNT = intCNT +1; 
     
     %Histogram of velocities over time 
-    subplot(3,3,7)
-    histogram([vtot(:)],30)
-    title('Velocity Histgram'),xlabel('Velocity (m/s)', 'FontSize', 10), ylabel('Number of Particles', 'FontSize', 10);
+    if intCNT > (stepsTot-5)
+        subplot(3,3,7)
+        histogram([vtot(:)],30)
+        title('Velocity Histgram'),xlabel('Velocity (m/s)', 'FontSize', 10), ylabel('Number of Particles', 'FontSize', 10);
+    end
 
     %Mean time between collision  
     Time(:,intCNT) = t;
