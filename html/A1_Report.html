@@ -1,0 +1,1352 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Assigment 1 - Monte-Carlo Modeling of Electron Transport</title><meta name="generator" content="MATLAB 9.11"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2022-02-05"><meta name="DC.source" content="A1_Report.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; }
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+span.typesection { color:#A0522D }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>Assigment 1 - Monte-Carlo Modeling of Electron Transport</h1><!--introduction--><p>Jinseng Vanderkloot 101031534</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Simulation 1 - Basic Electron Modelling</a></li><li><a href="#3">S1 Initialization of individual electron values</a></li><li><a href="#4">S1 vth and MFP</a></li><li><a href="#5">S1 Electrons position and velocity arrays</a></li><li><a href="#6">S1 Electron Random Assignments</a></li><li><a href="#7">S1 Main Loop</a></li><li><a href="#8">Simulation 2 - Collisions with Mean Free Path (MFP)</a></li><li><a href="#10">S2 Initialization of electron values</a></li><li><a href="#11">S2 Main Loop</a></li><li><a href="#12">Simulation 3 - Enhancements</a></li><li><a href="#14">S3 Initialization of electron values</a></li><li><a href="#15">S3 Main Loop</a></li><li><a href="#16">Simulation 4 - Enhancements - Injection</a></li><li><a href="#18">S4 Initialization of individual electron values</a></li><li><a href="#19">S4 Electrons position and velocity arrays</a></li><li><a href="#20">S4 Bottle Neck Boundary</a></li><li><a href="#21">S4 Main loop</a></li></ul></div><h2 id="1">Simulation 1 - Basic Electron Modelling</h2><p>Jinseng Vanderkloot 101031534</p><p>The purpose of Simulation 1 is to place electrons randomly inside the designated area. They will all have the same relative velocity but travel in random directions. When they make contact with the top or bottom boundary, they will "bounce" off them and travel in the opposite direction. When they encounter the side walls, the electron will travel from one side to the other to maintain the electron density in the designated area. Pauses removed from report simulation.</p><h2 id="3">S1 Initialization of individual electron values</h2><pre class="codeinput">clc
+clear <span class="string">all</span>
+close <span class="string">all</span>
+
+m0 = 9.10938215e-31;            <span class="comment">% electron mass</span>
+mn = 0.26*m0;                   <span class="comment">% Effective mass</span>
+Temp = 300;                     <span class="comment">% Inital Temp (K)</span>
+kb = 1.3806504e-23;             <span class="comment">% Boltzmann constant</span>
+tmn = 0.2e-12;                  <span class="comment">% Mean time between collision</span>
+</pre><h2 id="4">S1 vth and MFP</h2><pre class="codeinput"><span class="comment">%Thermal Velocity (Question 1.A)</span>
+vt=sqrt((2*kb*Temp)/mn);        <span class="comment">% Sim in 2D so (2*kb*Temp), 3D is (3*kb*Temp)</span>
+fprintf(<span class="string">"Thermal Velocity = %d m/s \n"</span>, vt);
+
+<span class="comment">% Mean free path (Velocity * minimum time between collision) (Question 1.B)</span>
+meanFreePath = vt * tmn;
+fprintf(<span class="string">"Mean free path = %d \n"</span>, meanFreePath);
+</pre><pre class="codeoutput">Thermal Velocity = 1.870193e+05 m/s 
+Mean free path = 3.740385e-08 
+</pre><h2 id="5">S1 Electrons position and velocity arrays</h2><pre class="codeinput"><span class="comment">% Plotting Area</span>
+wArea = 200e-9;
+lArea = 100e-9;
+
+numElec = 1000;                 <span class="comment">%Number of simulated Electrons</span>
+numEPlot = 10;                  <span class="comment">%Number of plotted Electrons</span>
+dt = (lArea*wArea);             <span class="comment">%Typically 1/100 of region size</span>
+stepsTot = 100;                 <span class="comment">%Total amount of steps (1000 was a long simulation)</span>
+tTot= stepsTot*dt;              <span class="comment">%Total Simulation time</span>
+x = zeros(1,numElec);           <span class="comment">%Inital X matrix</span>
+y = zeros(1,numElec);           <span class="comment">%Inital y matrix</span>
+vx = zeros(1,numElec);          <span class="comment">%Inital velocity x matrix</span>
+vy = zeros(1,numElec);          <span class="comment">%Inital velocity y matrix</span>
+vtot = zeros(1,numElec);        <span class="comment">%Inital velocity matrix</span>
+colors = rand(numElec,3);       <span class="comment">%Color assignment for each electron</span>
+</pre><h2 id="6">S1 Electron Random Assignments</h2><pre class="codeinput"><span class="keyword">for</span> cnt = 1:numElec
+    x(cnt)=rand()*wArea;
+    y(cnt)=rand()*lArea;
+    angle = (2*pi*rand());
+    vx(cnt)=sqrt(vt^2)*cos(angle);   <span class="comment">% velocity * random direction</span>
+    vy(cnt)=sqrt(vt^2)*sin(angle);   <span class="comment">% velocity * random direction</span>
+    vtot(cnt)= sqrt (vx(cnt)^2)+(vy(cnt)^2);
+<span class="keyword">end</span>
+</pre><h2 id="7">S1 Main Loop</h2><pre class="codeinput">t=0;
+intCNT = 2;
+eTemp(1) = Temp;
+<span class="keyword">while</span> t &lt; tTot
+    t = t + dt;
+
+    <span class="comment">%Store old position</span>
+    oldx = x;
+    oldy = y;
+
+    <span class="comment">%Update to new position</span>
+    x(1:numElec) = x(1:numElec) + (vx(1:numElec).*dt);
+    y(1:numElec) = y(1:numElec) + (vy(1:numElec).*dt);
+
+    vtot(1:numElec)= sqrt ((vx(1:numElec).^2)+(vy(1:numElec).^2));
+
+    <span class="comment">%Apply boundary conditions</span>
+    <span class="keyword">for</span> check = 1:numElec
+        <span class="comment">%If bottom contact, bounce off in opposite direction</span>
+        <span class="keyword">if</span> (y(check)&lt;=0)
+            y(check) = 0;
+            vy(check) = -vy(check);
+        <span class="keyword">end</span>
+        <span class="comment">%If top contact, bounce off in opposite directio</span>
+        <span class="keyword">if</span> (y(check)&gt;=lArea)
+            y(check) = lArea;
+            vy(check) = -vy(check);
+        <span class="keyword">end</span>
+        <span class="comment">%if left side of box, come out right side</span>
+        <span class="keyword">if</span>(x(check)&lt;=0)
+           x(check) = x(check) + wArea;
+        <span class="keyword">end</span>
+        <span class="comment">%if right side of box, come out left side</span>
+        <span class="keyword">if</span>(x(check)&gt;=wArea)
+          x(check) = x(check) - wArea;
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+
+    <span class="comment">%Plot Boundary and map some electrons</span>
+    <span class="keyword">for</span> Eplot = 1:numEPlot
+        subplot (2,1,1)
+        <span class="comment">%if the electron went out of sides and back on other side, do not</span>
+        <span class="comment">%draw line</span>
+        <span class="keyword">if</span> abs(oldx(Eplot)-x(Eplot))&lt;(wArea/2)
+            p = plot([oldx(Eplot),x(Eplot)],[oldy(Eplot),y(Eplot)]);
+        <span class="keyword">end</span>
+        p.Color=colors(Eplot,:);
+        axis([0,wArea,0,lArea]);
+        title(<span class="string">'Electron Model'</span>), xlabel(<span class="string">'Position (m)'</span>, <span class="string">'FontSize'</span>, 10), ylabel(<span class="string">'Position (m)'</span>, <span class="string">'FontSize'</span>, 10);
+
+        hold <span class="string">on</span>;
+    <span class="keyword">end</span>
+
+    <span class="comment">%Plot Averge Temprature in the system</span>
+    subplot (2,1,2)
+    Time(:,intCNT) = t;
+    allT = ((vtot(:).^2).*mn)./(2*kb);
+    eTemp(:,intCNT) = mean(allT);
+
+    plot(Time,eTemp,<span class="string">"r"</span>);
+    title(<span class="string">'Averge Temp'</span>),xlabel(<span class="string">'Time (s)'</span>, <span class="string">'FontSize'</span>, 10), ylabel(<span class="string">'Temp (K)'</span>, <span class="string">'FontSize'</span>, 10), ylim([299,301]);
+    hold <span class="string">on</span>;
+    intCNT = intCNT +1;
+
+<span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="A1_Report_01.png" alt=""> <h2 id="8">Simulation 2 - Collisions with Mean Free Path (MFP)</h2><p>Jinseng Vanderkloot 101031534</p><pre class="codeinput"><span class="comment">%The purpose of this simulation is to allow the electrons to scatter as if</span>
+<span class="comment">%making contact with another electron. This is done by randomizing the</span>
+<span class="comment">%velocity in x and y when a randomly generated value is less then the</span>
+<span class="comment">%probability of scattering. The temperature of the systems is monitored over</span>
+<span class="comment">%time as the velocities of the particles will undergo net change. The Mean</span>
+<span class="comment">%free path and mean time between collisions is also tracked (about the same</span>
+<span class="comment">%but one is distance and the other is time). A histogram is produced to</span>
+<span class="comment">%show the distribution of the velocities. Need to fix issue with temp</span>
+<span class="comment">%starting at about 600K but its noramlises towards to appropriate 300K</span>
+<span class="comment">%value as time continues.</span>
+</pre><h2 id="10">S2 Initialization of electron values</h2><pre class="codeinput">clc
+clear <span class="string">all</span>
+close <span class="string">all</span>
+
+<span class="comment">%Initial</span>
+m0 = 9.10938215e-31;            <span class="comment">% electron mass</span>
+mn = 0.26*m0;                   <span class="comment">% Effective mass</span>
+Temp = 300;                     <span class="comment">% Inital Temp (K)</span>
+kb = 1.3806504e-23;             <span class="comment">% Boltzmann constant</span>
+tmn = 0.2e-12;                  <span class="comment">% Mean time between collision</span>
+
+<span class="comment">% Region Area</span>
+wArea = 200e-9;
+lArea = 100e-9;
+
+<span class="comment">%Thermal Velocity (Question 1.A)</span>
+vt=sqrt((2*kb*Temp)/mn);        <span class="comment">% Sim in 2D so (2*kb*Temp), 3D is (3*kb*Temp)</span>
+
+<span class="comment">%Electrons position and velocity arrays</span>
+numElec = 1000;                 <span class="comment">%Number of simulated Electrons</span>
+numEPlot = 20;                  <span class="comment">%Number of plotted Electrons</span>
+dt = (lArea*wArea);             <span class="comment">%Typically 1/100 of region size</span>
+stepsTot = 80;                 <span class="comment">%Total amount of steps (1000 was a long simulation)</span>
+tTot= stepsTot*dt;              <span class="comment">%Total Simulation time</span>
+x = zeros(1,numElec);           <span class="comment">%Inital X matrix</span>
+y = zeros(1,numElec);           <span class="comment">%Inital y matrix</span>
+vx = zeros(1,numElec);          <span class="comment">%Inital velocity x matrix</span>
+vy = zeros(1,numElec);          <span class="comment">%Inital velocity y matrix</span>
+vtot = zeros(1,numElec);        <span class="comment">%Inital velocity matrix</span>
+avgTemp=0;                      <span class="comment">%Set average Temp to 0</span>
+
+<span class="comment">%Probability of Scatter</span>
+scatOn = 1;                     <span class="comment">%Turn Scatter on (1) or off(0)</span>
+Pscatter = 1-exp(-dt/tmn);      <span class="comment">%Scatter Equation</span>
+tScatter = zeros(1,numElec);    <span class="comment">%track scatter for each particle</span>
+
+<span class="comment">%Electron Graph initial</span>
+<span class="keyword">for</span> cnt = 1:numElec
+    x(cnt)=rand()*wArea;
+    y(cnt)=rand()*lArea;
+    vx(cnt)=sqrt(vt^2)*randn();  <span class="comment">% velocity * Gaussian dist</span>
+    vy(cnt)=sqrt(vt^2)*randn();  <span class="comment">% velocity * Gaussian dist</span>
+    <span class="comment">%Varience = sqrt(kT/m) - Do we use this?</span>
+    vtot(cnt)= sqrt (vx(cnt)^2)+(vy(cnt)^2);
+    colors= rand(numElec,3);     <span class="comment">%Random Color for each electron</span>
+<span class="keyword">end</span>
+</pre><h2 id="11">S2 Main Loop</h2><pre class="codeinput">t=0;
+intCNT = 1; <span class="comment">%Counter with time</span>
+<span class="keyword">while</span> t &lt; tTot
+    t = t + dt;
+
+    <span class="comment">%Store old position</span>
+    oldx = x;
+    oldy = y;
+
+    <span class="comment">%Update to new position</span>
+    x(1:numElec) = x(1:numElec) + (vx(1:numElec).*dt);
+    y(1:numElec) = y(1:numElec) + (vy(1:numElec).*dt);
+
+    vtot(1:numElec)= sqrt ((vx(1:numElec).^2)+(vy(1:numElec).^2));
+
+
+    <span class="keyword">for</span> check = 1:numElec
+        <span class="comment">%Scatter</span>
+        <span class="keyword">if</span> scatOn==1
+            <span class="keyword">if</span> Pscatter &gt; rand()
+                vx(check)=sqrt(vt^2 /2)*randn();
+                vy(check)=sqrt(vt^2 /2)*randn();
+                tScatter(check)= 0; <span class="comment">%If collision, time goes to 0</span>
+            <span class="keyword">else</span>
+                tScatter(check)= tScatter(check) + dt; <span class="comment">%track time increaing while no collision</span>
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+
+        <span class="comment">%Apply boundary conditions</span>
+        <span class="comment">%If bottom contact, bounce off in opposite direction</span>
+        <span class="keyword">if</span> (y(check)&lt;=0)
+            y(check) = 0;
+            vy(check) = -vy(check);
+        <span class="keyword">end</span>
+        <span class="comment">%If top contact, bounce off in opposite directio</span>
+        <span class="keyword">if</span> (y(check)&gt;=lArea)
+            y(check) = lArea;
+            vy(check) = -vy(check);
+        <span class="keyword">end</span>
+        <span class="comment">%if left side of box, come out right side</span>
+        <span class="keyword">if</span>(x(check)&lt;=0)
+           x(check) = x(check) + wArea;
+        <span class="keyword">end</span>
+        <span class="comment">%if right side of box, come out left side</span>
+        <span class="keyword">if</span>(x(check)&gt;=wArea)
+          x(check) = x(check) - wArea;
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+
+    <span class="comment">%Plot Boundary and map some electrons</span>
+    <span class="keyword">for</span> Eplot = 1:numEPlot
+        figure(1)
+        subplot (3,1,1)
+        <span class="comment">%if the electron went out of sides and back on other side, do not</span>
+        <span class="comment">%draw line</span>
+        <span class="keyword">if</span> abs(oldx(Eplot)-x(Eplot))&lt;(wArea/2)
+            p = plot([oldx(Eplot),x(Eplot)],[oldy(Eplot),y(Eplot)]);
+        <span class="keyword">end</span>
+        p.Color=colors(Eplot,:);
+        axis([0,wArea,0,lArea]);
+        title(<span class="string">'Electron Model'</span>), xlabel(<span class="string">'Position (m)'</span>, <span class="string">'FontSize'</span>, 10), ylabel(<span class="string">'Position (m)'</span>, <span class="string">'FontSize'</span>, 10);
+
+        hold <span class="string">on</span>;
+    <span class="keyword">end</span>
+
+    <span class="comment">%Calc Average Temp for all t and Plot</span>
+    subplot (3,1,2)
+    Time(:,intCNT) = t;
+    allT = ((vtot(:).^2).*mn)./(2*kb);
+    avgTemp(:,intCNT) = mean(allT);
+
+    plot(Time,avgTemp,<span class="string">"r"</span>);
+    title(<span class="string">'Averge Temp'</span>),xlabel(<span class="string">'Time (s)'</span>, <span class="string">'FontSize'</span>, 10), ylabel(<span class="string">'Temp (K)'</span>, <span class="string">'FontSize'</span>, 10), ylim([250,600]);
+    hold <span class="string">on</span>;
+    intCNT = intCNT +1;
+
+    <span class="comment">%Histogram of velocities over time</span>
+    <span class="keyword">if</span> intCNT &gt; (stepsTot-5)
+        subplot(3,3,7)
+        histogram([vtot(:)],30)
+        title(<span class="string">'Velocity Histgram'</span>),xlabel(<span class="string">'Velocity (m/s)'</span>, <span class="string">'FontSize'</span>, 10), ylabel(<span class="string">'Number of Particles'</span>, <span class="string">'FontSize'</span>, 10);
+    <span class="keyword">end</span>
+
+    <span class="comment">%Mean time between collision</span>
+    Time(:,intCNT) = t;
+    allScat(:,intCNT) = mean(tScatter(:));
+    subplot(3,3,8)
+    plot(Time,allScat,<span class="string">'r'</span>);
+    title(<span class="string">'Mean Time between Collision'</span>),xlabel(<span class="string">'Time (s)'</span>, <span class="string">'FontSize'</span>, 10), ylabel(<span class="string">'Time(s)'</span>, <span class="string">'FontSize'</span>, 10);
+    hold <span class="string">on</span>;
+
+    <span class="comment">%Mean Free Path over time</span>
+    Time(:,intCNT) = t;
+    mfp(:,intCNT) = mean(tScatter(:))*mean(vtot(:));
+    subplot(3,3,9)
+    plot(Time,mfp,<span class="string">'r'</span>);
+    title(<span class="string">'Mean Free Path '</span>),xlabel(<span class="string">'Time (s)'</span>, <span class="string">'FontSize'</span>, 10), ylabel(<span class="string">'Time(s)'</span>, <span class="string">'FontSize'</span>, 10);
+    hold <span class="string">on</span>;
+
+<span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="A1_Report_02.png" alt=""> <h2 id="12">Simulation 3 - Enhancements</h2><p>Jinseng Vanderkloot 101031534</p><pre class="codeinput"><span class="comment">%Simulation 3 addssolid blocks which electrons will bounce when making</span>
+<span class="comment">%contact. The electrons will continue to scatter. There should be some type</span>
+<span class="comment">%of re-thermalization electrons make contact with the boxes so a value is</span>
+<span class="comment">%added to reduce the velocity therefore reducing temprature. A electron</span>
+<span class="comment">%density map and temprature map are displayed. (Some inital values may be</span>
+<span class="comment">%changed to reduce simulation time. To improve in the future, use linear</span>
+<span class="comment">%indexing). Some bleeding does exsist looking at the density map.</span>
+</pre><h2 id="14">S3 Initialization of electron values</h2><pre class="codeinput">clc
+clear <span class="string">all</span>
+close <span class="string">all</span>
+
+<span class="comment">%Initial</span>
+m0 = 9.10938215e-31;            <span class="comment">% electron mass</span>
+mn = 0.26*m0;                   <span class="comment">% Effective mass</span>
+Temp = 300;                     <span class="comment">% Inital Temp (K)</span>
+kb = 1.3806504e-23;             <span class="comment">% Boltzmann constant</span>
+tmn = 0.2e-12;                  <span class="comment">% Mean time between collision</span>
+
+<span class="comment">% Region Area</span>
+wArea = 200e-9;
+lArea = 100e-9;
+
+<span class="comment">%Thermal Velocity (Question 1.A)</span>
+vt=sqrt((2*kb*Temp)/mn);        <span class="comment">% Sim in 2D so (2*kb*Temp), 3D is (3*kb*Temp)</span>
+
+<span class="comment">%Electron motion</span>
+numElec = 1000;                  <span class="comment">%Number of simulated Electrons</span>
+numEPlot = 40;                  <span class="comment">%Number of plotted Electrons</span>
+dt = (lArea*wArea);           <span class="comment">%Typically 1/100 of region size</span>
+stepsTot = 50;                 <span class="comment">%Total amount of steps (1000 was a long simulation)</span>
+tTot= stepsTot*dt;              <span class="comment">%Total Simulation time</span>
+x = zeros(1,numElec);           <span class="comment">%Inital X matrix</span>
+y = zeros(1,numElec);           <span class="comment">%Inital y matrix</span>
+vx = zeros(1,numElec);          <span class="comment">%Inital velocity x matrix</span>
+vy = zeros(1,numElec);          <span class="comment">%Inital velocity y matrix</span>
+vtot = zeros(1,numElec);        <span class="comment">%Inital velocity matrix</span>
+avgTemp=0;                      <span class="comment">%Set average Temp to 0</span>
+
+<span class="comment">%Probability of Scatter</span>
+scatOn = 1;                     <span class="comment">%Turn Scatter on (1) or off(0)</span>
+Pscatter = 1-exp(-dt/tmn);      <span class="comment">%Scatter Equation</span>
+tScatter = zeros(1,numElec);
+
+<span class="comment">%Bottle Neck Boundary reduced to prevent bleeding</span>
+<span class="comment">% X limit (no particle between X1 and X2 - Cosider Y limits)</span>
+boxX1=80e-9;
+boxX2=120e-9;
+<span class="comment">% Y Limit (no particles between 0 and Y1 and Y2 to Y limit)</span>
+boxY1 = 40e-9;
+boxY2 = 60e-9;
+
+
+<span class="comment">%Electron Graph</span>
+<span class="keyword">for</span> cnt = 1:numElec
+    x(cnt)=rand()*wArea;
+    y(cnt)=rand()*lArea;
+    <span class="comment">%If the electrons are place in the box, re-roll position</span>
+    <span class="keyword">while</span> (x(cnt)&gt;=boxX1 &amp;&amp; x(cnt)&lt;=boxX2 &amp;&amp; (y(cnt)&lt;=boxY1 || y(cnt&gt;=boxY2))) <span class="comment">%Relocate them if in boundary</span>
+        x(cnt)=rand()*wArea;
+        y(cnt)=rand()*lArea;
+    <span class="keyword">end</span>
+    vx(cnt)=sqrt(vt^2)*randn();  <span class="comment">% velocity * Gaussian dist</span>
+    vy(cnt)=sqrt(vt^2)*randn();  <span class="comment">% velocity * Gaussian dist</span>
+    <span class="comment">%Varience = sqrt(kT/m) - Do we use this?</span>
+    vtot(cnt)= sqrt (vx(cnt)^2)+(vy(cnt)^2);
+    colors= rand(numElec,3);
+<span class="keyword">end</span>
+
+<span class="comment">%Boundary Energy/Velocity loss coefficient (reduction in velocity =</span>
+<span class="comment">%reduction in temprature)</span>
+vloss = 0.95;
+</pre><h2 id="15">S3 Main Loop</h2><pre class="codeinput">t=0;
+intCNT = 1; <span class="comment">%Counter with time</span>
+<span class="keyword">while</span> t &lt; tTot
+    t = t + dt;
+
+    <span class="comment">%Store old position</span>
+    oldx = x;
+    oldy = y;
+
+    <span class="comment">%Update to new position</span>
+    x(1:numElec) = x(1:numElec) + (vx(1:numElec).*dt);
+    y(1:numElec) = y(1:numElec) + (vy(1:numElec).*dt);
+
+    vtot(1:numElec)= sqrt ((vx(1:numElec).^2)+(vy(1:numElec).^2));
+
+    <span class="keyword">for</span> check = 1:numElec
+        <span class="comment">%Scatter</span>
+        <span class="keyword">if</span> scatOn==1
+            <span class="keyword">if</span> Pscatter &gt; rand()
+                vx(check)=sqrt(vt^2 /2)*randn();
+                vy(check)=sqrt(vt^2 /2)*randn();
+                tScatter(check)= 0; <span class="comment">%If collision, time goes to 0</span>
+            <span class="keyword">else</span>
+                tScatter(check)= tScatter(check) + dt; <span class="comment">%track time increaing while no collision</span>
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+
+        <span class="comment">%Apply Boundary Conditions</span>
+        <span class="comment">%If bottom contact, bounce off in opposite direction</span>
+        <span class="keyword">if</span> (y(check)&lt;=0)
+            y(check) = 0;
+            vy(check) = -vy(check);
+        <span class="keyword">end</span>
+        <span class="comment">%If top contact, bounce off in opposite directio</span>
+        <span class="keyword">if</span> (y(check)&gt;=lArea)
+            y(check) = lArea;
+            vy(check) = -vy(check);
+        <span class="keyword">end</span>
+        <span class="comment">%if left side of box, come out right side</span>
+        <span class="keyword">if</span>(x(check)&lt;=0)
+           x(check) = 0;
+           vx(check) = -vx(check);
+        <span class="keyword">end</span>
+        <span class="comment">%if right side of box, come out left side</span>
+        <span class="keyword">if</span>(x(check)&gt;=wArea)
+           x(check) = wArea;
+           vx(check) = -vx(check);
+        <span class="keyword">end</span>
+
+        <span class="comment">%Apply bottle neck conditions</span>
+        <span class="comment">%If contact on left walls of boundary (not in Gap)</span>
+        <span class="keyword">if</span> (oldx(check)&lt;boxX1 &amp;&amp; x(check)&gt;=boxX1 &amp;&amp; (y(check)&lt;= boxY1 || y(check)&gt;= boxY2))
+            x(check)=boxX1;
+            vx(check) = -(vx(check)*vloss);
+        <span class="keyword">end</span>
+        <span class="comment">%If contact on right walls of boundary (not in Gap)</span>
+        <span class="keyword">if</span> (oldx(check)&gt;boxX2 &amp;&amp; x(check)&lt;=boxX2 &amp;&amp; (y(check)&lt;= boxY1 || y(check)&gt;= boxY2))
+            x(check)=boxX2;
+            vx(check) = -(vx(check)*vloss);
+        <span class="keyword">end</span>
+        <span class="comment">%If contact with bottom boundary in gap</span>
+        <span class="keyword">if</span> (x(check)&gt;boxX1 &amp;&amp; x(check)&lt; boxX2 &amp;&amp; oldy(check)&gt;boxY1 &amp;&amp; y(check)&lt;= boxY1)
+            y(check)= boxY1;
+            vy(check) = -(vy(check)*vloss);
+        <span class="keyword">end</span>
+        <span class="comment">%If contact with top boundary in gap</span>
+        <span class="keyword">if</span> (x(check)&gt;boxX1 &amp;&amp; x(check)&lt; boxX2 &amp;&amp; oldy(check)&lt;boxY2 &amp;&amp; y(check)&gt;=boxY2)
+            y(check)=boxY2;
+            vy(check) = -(vy(check)*vloss);
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+
+    <span class="comment">%Plot Boundary and map some electrons</span>
+    <span class="keyword">for</span> Eplot = 1:numEPlot
+        figure(1)
+        subplot (2,1,1)
+        <span class="comment">%if the electron went out of sides and back on other side, do not</span>
+        <span class="comment">%draw line</span>
+        <span class="keyword">if</span> abs(oldx(Eplot)-x(Eplot))&lt;(wArea/2)
+            p = plot([oldx(Eplot),x(Eplot)],[oldy(Eplot),y(Eplot)]);
+        <span class="keyword">end</span>
+        rectangle(<span class="string">'Position'</span>,[boxX1 0 (boxX2-boxX1) boxY1],<span class="string">'FaceColor'</span>,[0 0 0])
+        rectangle(<span class="string">'Position'</span>,[boxX1 boxY2 (boxX2-boxX1) (lArea-boxY2)],<span class="string">'FaceColor'</span>,[0 0 0])
+        p.Color=colors(Eplot,:);
+        axis([0,wArea,0,lArea]);
+        title(<span class="string">'Electron Model'</span>), xlabel(<span class="string">'Position (m)'</span>, <span class="string">'FontSize'</span>, 10), ylabel(<span class="string">'Position (m)'</span>, <span class="string">'FontSize'</span>, 10);
+
+        hold <span class="string">on</span>;
+    <span class="keyword">end</span>
+    <span class="comment">%Electron Density Map</span>
+    eMapX=linspace(0, wArea, 100);
+    eMapY=linspace(0, lArea, 50);
+    EDM=histcounts2(y,x,eMapY,eMapX);
+    subplot(2,2,3)
+    imagesc(eMapY,eMapX,EDM),colorbar,title(<span class="string">'Electron Density Map'</span>);
+
+    <span class="comment">%Electron Temprature Map</span>
+    allT = ((vtot(:).^2).*mn)./(2*kb);
+    xv = linspace(min(x), max(x),100);
+    yv = linspace(min(y), max(y),50);
+    [X,Y] = meshgrid(xv,yv);
+    ETM=griddata(x,y,allT,X,Y);
+    subplot(2,2,4);
+    imagesc(xv,yv,ETM),colorbar,title(<span class="string">"Temprature Map"</span>)
+    axis([0, wArea, 0 lArea]);
+
+<span class="keyword">end</span>
+</pre><pre class="codeoutput">Warning: Duplicate data points have been detected and removed - corresponding
+values have been averaged. 
+</pre><img vspace="5" hspace="5" src="A1_Report_03.png" alt=""> <h2 id="16">Simulation 4 - Enhancements - Injection</h2><p>JinsengVanderkloot - 101031534</p><pre class="codeinput"><span class="comment">%Section 3-2 has the electrons injected from one point and another box is</span>
+<span class="comment">%added. (Some value are changed or reduced to decrease simulation times)</span>
+</pre><h2 id="18">S4 Initialization of individual electron values</h2><pre class="codeinput">clc
+clear <span class="string">all</span>
+close <span class="string">all</span>
+
+m0 = 9.10938215e-31;            <span class="comment">% electron mass</span>
+mn = 0.26*m0;                   <span class="comment">% Effective mass</span>
+Temp = 300;                     <span class="comment">% Inital Temp (K)</span>
+kb = 1.3806504e-23;             <span class="comment">% Boltzmann constant</span>
+tmn = 0.2e-12;                  <span class="comment">% Mean time between collision</span>
+
+<span class="comment">% Region Area</span>
+wArea = 200e-9;
+lArea = 100e-9;
+
+<span class="comment">%Thermal Velocity (Question 1.A)</span>
+vt=sqrt((2*kb*Temp)/mn);        <span class="comment">% Sim in 2D so (2*kb*Temp), 3D is (3*kb*Temp)</span>
+</pre><h2 id="19">S4 Electrons position and velocity arrays</h2><pre class="codeinput">numElec = 50;                   <span class="comment">%Number of simulated Electrons</span>
+numEPlot = 50;                  <span class="comment">%Number of plotted Electrons</span>
+dt = (lArea*wArea);             <span class="comment">%Typically 1/100 of region size</span>
+stepsTot = 100;                 <span class="comment">%Total amount of steps (1000 was a long simulation)</span>
+tTot= stepsTot*dt;              <span class="comment">%Total Simulation time</span>
+x = zeros(1,numElec);           <span class="comment">%Inital X matrix</span>
+y = zeros(1,numElec);           <span class="comment">%Inital y matrix</span>
+vx = zeros(1,numElec);          <span class="comment">%Inital velocity x matrix</span>
+vy = zeros(1,numElec);          <span class="comment">%Inital velocity y matrix</span>
+vtot = zeros(1,numElec);        <span class="comment">%Inital velocity matrix</span>
+avgTemp=0;                      <span class="comment">%Set average Temp to 0</span>
+
+<span class="comment">%Electron color assignment</span>
+<span class="keyword">for</span> cnt = 1:numElec
+    colors= rand(numElec,3);
+    y(cnt) = 50e-9;
+<span class="keyword">end</span>
+
+<span class="comment">%Probability of Scatter</span>
+scatOn = 1;                     <span class="comment">%Turn Scatter on (1) or off(0)</span>
+Pscatter = 1-exp(-dt/tmn);      <span class="comment">%Scatter Equation</span>
+tScatter = zeros(1,numElec);
+</pre><h2 id="20">S4 Bottle Neck Boundary</h2><p>X limit (no particle between X1 and X2 - Cosider Y limits)</p><pre class="codeinput">boxX1=80e-9;
+boxX2=120e-9;
+<span class="comment">% Y Limit (no particles between 0 and Y1 and Y2 to Y limit)</span>
+boxY1 = 40e-9;
+boxY2 = 60e-9;
+
+<span class="comment">%New Box</span>
+boxX3 = 150e-9;
+boxX4 = 170e-9;
+boxY3 = 40e-9;
+boxY4 = 60e-9;
+
+<span class="comment">%Boundary Energy/Velocity loss coefficient, when hitting wall, increase</span>
+<span class="comment">%velocity = increase temp, decrease velocity = decrease temp</span>
+vloss = 0.9;
+</pre><h2 id="21">S4 Main loop</h2><pre class="codeinput">t=0;
+intCNT = 1; <span class="comment">%Counter with time</span>
+<span class="keyword">while</span> t &lt; tTot
+    t = t + dt;
+
+    <span class="comment">%Store old position</span>
+    oldx = x;
+    oldy = y;
+
+    <span class="comment">%Inject one elctron for each loop iteration</span>
+    <span class="keyword">if</span> intCNT &lt;= numElec
+        <span class="comment">%Add a velocity for injected electron but have it dominate in the y</span>
+        <span class="comment">%direction to go towards the gap</span>
+        vx(intCNT)=0.9*sqrt(vt^2)*abs(randn());  <span class="comment">% velocity * Gaussian dist</span>
+        vy(intCNT)=0.1*sqrt(vt^2)*randn();  <span class="comment">% velocity * Gaussian dist</span>
+        vtot(intCNT)= sqrt (vx(intCNT)^2)+(vy(intCNT)^2);
+    <span class="keyword">end</span>
+
+    <span class="comment">%Update to new position</span>
+    x(1:numElec) = x(1:numElec) + (vx(1:numElec).*dt);
+    y(1:numElec) = y(1:numElec) + (vy(1:numElec).*dt);
+    vtot(1:numElec)= sqrt ((vx(1:numElec).^2)+(vy(1:numElec).^2));
+
+    <span class="keyword">for</span> check = 1:numElec
+        <span class="comment">%Scatter</span>
+        <span class="keyword">if</span> scatOn==1
+            <span class="keyword">if</span> Pscatter &gt; rand()
+                <span class="keyword">if</span> vx ~= 0
+                vx(check)=sqrt(vt^2 /2)*randn();
+                vy(check)=sqrt(vt^2 /2)*randn();
+                <span class="keyword">end</span>
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+
+        <span class="comment">%Apply Boundary Conditions</span>
+        <span class="comment">%If bottom contact, bounce off in opposite direction</span>
+        <span class="keyword">if</span> (y(check)&lt;=0)
+            y(check) = 0;
+            vy(check) = -vy(check);
+        <span class="keyword">end</span>
+        <span class="comment">%If top contact, bounce off in opposite directio</span>
+        <span class="keyword">if</span> (y(check)&gt;=lArea)
+            y(check) = lArea;
+            vy(check) = -vy(check);
+        <span class="keyword">end</span>
+        <span class="comment">%if left side of box, come out right side</span>
+        <span class="keyword">if</span>(x(check)&lt;=0)
+           x(check) = 0;
+           vx(check) = -vx(check);
+        <span class="keyword">end</span>
+        <span class="comment">%if right side of box, come out left side</span>
+        <span class="keyword">if</span>(x(check)&gt;=wArea)
+           x(check) = wArea;
+           vx(check) = -vx(check);
+        <span class="keyword">end</span>
+
+        <span class="comment">%Apply bottle neck conditions</span>
+        <span class="comment">%If contact on left walls of boundary (not in Gap)</span>
+        <span class="keyword">if</span> (oldx(check)&lt;boxX1 &amp;&amp; x(check)&gt;=boxX1 &amp;&amp; (y(check)&lt;= boxY1 || y(check)&gt;= boxY2))
+            x(check)=boxX1;
+            vx(check) = -(vx(check)*vloss);
+        <span class="keyword">end</span>
+        <span class="comment">%If contact on right walls of boundary (not in Gap)</span>
+        <span class="keyword">if</span> (oldx(check)&gt;boxX2 &amp;&amp; x(check)&lt;=boxX2 &amp;&amp; (y(check)&lt;= boxY1 || y(check)&gt;= boxY2))
+            x(check)=boxX2;
+            vx(check) = -(vx(check)*vloss);
+        <span class="keyword">end</span>
+        <span class="comment">%If contact with bottom boundary in gap</span>
+        <span class="keyword">if</span> (x(check)&gt;boxX1 &amp;&amp; x(check)&lt; boxX2 &amp;&amp; oldy(check)&gt;boxY1 &amp;&amp; y(check)&lt;= boxY1)
+            y(check)= boxY1;
+            vy(check) = -(vy(check)*vloss);
+        <span class="keyword">end</span>
+        <span class="comment">%If contact with top boundary in gap</span>
+        <span class="keyword">if</span> (x(check)&gt;boxX1 &amp;&amp; x(check)&lt; boxX2 &amp;&amp; oldy(check)&lt;boxY2 &amp;&amp; y(check)&gt;=boxY2)
+            y(check)=boxY2;
+            vy(check) = -(vy(check)*vloss);
+        <span class="keyword">end</span>
+
+        <span class="comment">%Apply bottle neck conditions for new box</span>
+        <span class="keyword">if</span> (oldx(check)&lt;boxX3 &amp;&amp; x(check)&gt;=boxX3 &amp;&amp; (y(check)&lt;= boxY4 || y(check)&gt;= boxY3))
+            x(check)=boxX3;
+            vx(check) = -(vx(check)*vloss);
+        <span class="keyword">end</span>
+        <span class="comment">%If contact on right walls of boundary (not in Gap)</span>
+        <span class="keyword">if</span> (oldx(check)&gt;boxX4 &amp;&amp; x(check)&lt;=boxX4 &amp;&amp; (y(check)&lt;= boxY4 || y(check)&gt;= boxY3))
+            x(check)=boxX4;
+            vx(check) = -(vx(check)*vloss);
+        <span class="keyword">end</span>
+        <span class="comment">%If contact with bottom boundary in gap</span>
+        <span class="keyword">if</span> (x(check)&gt;boxX3 &amp;&amp; x(check)&lt; boxX4 &amp;&amp; oldy(check)&gt;boxY4 &amp;&amp; y(check)&lt;= boxY4)
+            y(check)= boxY4;
+            vy(check) = -(vy(check)*vloss);
+        <span class="keyword">end</span>
+        <span class="comment">%If contact with top boundary in gap</span>
+        <span class="keyword">if</span> (x(check)&gt;boxX3 &amp;&amp; x(check)&lt; boxX4 &amp;&amp; oldy(check)&lt;boxY3 &amp;&amp; y(check)&gt;=boxY3)
+            y(check)=boxY3;
+            vy(check) = -(vy(check)*vloss);
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+
+    <span class="comment">%Plot Boundary and map some electrons</span>
+    <span class="keyword">for</span> Eplot = 1:numEPlot
+        figure(1)
+        <span class="comment">%if the electron went out of sides and back on other side, do not</span>
+        <span class="comment">%draw line</span>
+        <span class="keyword">if</span> abs(oldx(Eplot)-x(Eplot))&lt;(wArea/2)
+            p = plot([oldx(Eplot),x(Eplot)],[oldy(Eplot),y(Eplot)]);
+        <span class="keyword">end</span>
+        rectangle(<span class="string">'Position'</span>,[boxX1 0 (boxX2-boxX1) boxY1],<span class="string">'FaceColor'</span>,[0 0 0])
+        rectangle(<span class="string">'Position'</span>,[boxX1 boxY2 (boxX2-boxX1) (lArea-boxY2)],<span class="string">'FaceColor'</span>,[0 0 0])
+        rectangle(<span class="string">'Position'</span>,[boxX3 boxY3 (boxX4-boxX3) (boxY4-boxY3)],<span class="string">'FaceColor'</span>,[0 0 0])
+        p.Color=colors(Eplot,:);
+        axis([0,wArea,0,lArea]);
+        title(<span class="string">'Electron Model'</span>), xlabel(<span class="string">'Position (m)'</span>, <span class="string">'FontSize'</span>, 10), ylabel(<span class="string">'Position (m)'</span>, <span class="string">'FontSize'</span>, 10);
+        hold <span class="string">on</span>;
+    <span class="keyword">end</span>
+    intCNT = intCNT + 1;
+
+<span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="A1_Report_04.png" alt=""> <p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2021b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Assigment 1 - Monte-Carlo Modeling of Electron Transport 
+% Jinseng Vanderkloot 101031534
+%% Simulation 1 - Basic Electron Modelling
+% Jinseng Vanderkloot 101031534
+%% 
+% The purpose of Simulation 1 is to place electrons randomly inside the 
+% designated area. They will all have the same relative velocity but travel
+% in random directions. When they make contact with the top or bottom
+% boundary, they will "bounce" off them and travel in the opposite
+% direction. When they encounter the side walls, the electron will travel
+% from one side to the other to maintain the electron density in the 
+% designated area. Pauses removed from report simulation. 
+
+%% S1 Initialization of individual electron values
+clc
+clear all 
+close all
+
+m0 = 9.10938215e-31;            % electron mass
+mn = 0.26*m0;                   % Effective mass
+Temp = 300;                     % Inital Temp (K)
+kb = 1.3806504e-23;             % Boltzmann constant
+tmn = 0.2e-12;                  % Mean time between collision 
+
+%% S1 vth and MFP
+
+%Thermal Velocity (Question 1.A) 
+vt=sqrt((2*kb*Temp)/mn);        % Sim in 2D so (2*kb*Temp), 3D is (3*kb*Temp)
+fprintf("Thermal Velocity = %d m/s \n", vt);
+
+% Mean free path (Velocity * minimum time between collision) (Question 1.B)
+meanFreePath = vt * tmn;
+fprintf("Mean free path = %d \n", meanFreePath);
+
+%% S1 Electrons position and velocity arrays
+
+% Plotting Area 
+wArea = 200e-9;
+lArea = 100e-9;
+
+numElec = 1000;                 %Number of simulated Electrons 
+numEPlot = 10;                  %Number of plotted Electrons 
+dt = (lArea*wArea);             %Typically 1/100 of region size
+stepsTot = 100;                 %Total amount of steps (1000 was a long simulation) 
+tTot= stepsTot*dt;              %Total Simulation time 
+x = zeros(1,numElec);           %Inital X matrix          
+y = zeros(1,numElec);           %Inital y matrix  
+vx = zeros(1,numElec);          %Inital velocity x matrix  
+vy = zeros(1,numElec);          %Inital velocity y matrix
+vtot = zeros(1,numElec);        %Inital velocity matrix
+colors = rand(numElec,3);       %Color assignment for each electron                   
+
+
+%% S1 Electron Random Assignments
+for cnt = 1:numElec
+    x(cnt)=rand()*wArea;
+    y(cnt)=rand()*lArea;
+    angle = (2*pi*rand());
+    vx(cnt)=sqrt(vt^2)*cos(angle);   % velocity * random direction   
+    vy(cnt)=sqrt(vt^2)*sin(angle);   % velocity * random direction
+    vtot(cnt)= sqrt (vx(cnt)^2)+(vy(cnt)^2);
+end
+%% S1 Main Loop 
+
+t=0;
+intCNT = 2;
+eTemp(1) = Temp;
+while t < tTot
+    t = t + dt; 
+    
+    %Store old position 
+    oldx = x;
+    oldy = y;
+    
+    %Update to new position 
+    x(1:numElec) = x(1:numElec) + (vx(1:numElec).*dt);
+    y(1:numElec) = y(1:numElec) + (vy(1:numElec).*dt);
+    
+    vtot(1:numElec)= sqrt ((vx(1:numElec).^2)+(vy(1:numElec).^2));
+    
+    %Apply boundary conditions 
+    for check = 1:numElec
+        %If bottom contact, bounce off in opposite direction
+        if (y(check)<=0)
+            y(check) = 0;
+            vy(check) = -vy(check);
+        end
+        %If top contact, bounce off in opposite directio
+        if (y(check)>=lArea)
+            y(check) = lArea;
+            vy(check) = -vy(check);
+        end
+        %if left side of box, come out right side 
+        if(x(check)<=0)
+           x(check) = x(check) + wArea;
+        end
+        %if right side of box, come out left side
+        if(x(check)>=wArea)
+          x(check) = x(check) - wArea;
+        end
+    end 
+
+    %Plot Boundary and map some electrons
+    for Eplot = 1:numEPlot
+        subplot (2,1,1)
+        %if the electron went out of sides and back on other side, do not
+        %draw line
+        if abs(oldx(Eplot)-x(Eplot))<(wArea/2)
+            p = plot([oldx(Eplot),x(Eplot)],[oldy(Eplot),y(Eplot)]);
+        end
+        p.Color=colors(Eplot,:);
+        axis([0,wArea,0,lArea]);
+        title('Electron Model'), xlabel('Position (m)', 'FontSize', 10), ylabel('Position (m)', 'FontSize', 10);
+        
+        hold on;
+    end 
+    
+    %Plot Averge Temprature in the system
+    subplot (2,1,2)
+    Time(:,intCNT) = t;
+    allT = ((vtot(:).^2).*mn)./(2*kb);
+    eTemp(:,intCNT) = mean(allT);
+     
+    plot(Time,eTemp,"r");
+    title('Averge Temp'),xlabel('Time (s)', 'FontSize', 10), ylabel('Temp (K)', 'FontSize', 10), ylim([299,301]); 
+    hold on;
+    intCNT = intCNT +1; 
+
+end 
+
+%% Simulation 2 - Collisions with Mean Free Path (MFP)
+% Jinseng Vanderkloot 101031534
+%% 
+%The purpose of this simulation is to allow the electrons to scatter as if
+%making contact with another electron. This is done by randomizing the
+%velocity in x and y when a randomly generated value is less then the
+%probability of scattering. The temperature of the systems is monitored over
+%time as the velocities of the particles will undergo net change. The Mean
+%free path and mean time between collisions is also tracked (about the same
+%but one is distance and the other is time). A histogram is produced to
+%show the distribution of the velocities. Need to fix issue with temp
+%starting at about 600K but its noramlises towards to appropriate 300K
+%value as time continues. 
+
+%% S2 Initialization of electron values
+
+clc
+clear all
+close all 
+
+%Initial
+m0 = 9.10938215e-31;            % electron mass
+mn = 0.26*m0;                   % Effective mass
+Temp = 300;                     % Inital Temp (K)
+kb = 1.3806504e-23;             % Boltzmann constant
+tmn = 0.2e-12;                  % Mean time between collision 
+
+% Region Area 
+wArea = 200e-9;
+lArea = 100e-9;
+
+%Thermal Velocity (Question 1.A) 
+vt=sqrt((2*kb*Temp)/mn);        % Sim in 2D so (2*kb*Temp), 3D is (3*kb*Temp)
+
+%Electrons position and velocity arrays 
+numElec = 1000;                 %Number of simulated Electrons 
+numEPlot = 20;                  %Number of plotted Electrons 
+dt = (lArea*wArea);             %Typically 1/100 of region size
+stepsTot = 80;                 %Total amount of steps (1000 was a long simulation) 
+tTot= stepsTot*dt;              %Total Simulation time 
+x = zeros(1,numElec);           %Inital X matrix          
+y = zeros(1,numElec);           %Inital y matrix  
+vx = zeros(1,numElec);          %Inital velocity x matrix  
+vy = zeros(1,numElec);          %Inital velocity y matrix
+vtot = zeros(1,numElec);        %Inital velocity matrix
+avgTemp=0;                      %Set average Temp to 0 
+
+%Probability of Scatter 
+scatOn = 1;                     %Turn Scatter on (1) or off(0)
+Pscatter = 1-exp(-dt/tmn);      %Scatter Equation 
+tScatter = zeros(1,numElec);    %track scatter for each particle 
+
+%Electron Graph initial
+for cnt = 1:numElec
+    x(cnt)=rand()*wArea;
+    y(cnt)=rand()*lArea;
+    vx(cnt)=sqrt(vt^2)*randn();  % velocity * Gaussian dist   
+    vy(cnt)=sqrt(vt^2)*randn();  % velocity * Gaussian dist 
+    %Varience = sqrt(kT/m) - Do we use this? 
+    vtot(cnt)= sqrt (vx(cnt)^2)+(vy(cnt)^2);
+    colors= rand(numElec,3);     %Random Color for each electron 
+end
+%% S2 Main Loop 
+t=0;
+intCNT = 1; %Counter with time
+while t < tTot
+    t = t + dt; 
+    
+    %Store old position 
+    oldx = x;
+    oldy = y;
+    
+    %Update to new position 
+    x(1:numElec) = x(1:numElec) + (vx(1:numElec).*dt);
+    y(1:numElec) = y(1:numElec) + (vy(1:numElec).*dt);
+
+    vtot(1:numElec)= sqrt ((vx(1:numElec).^2)+(vy(1:numElec).^2));
+    
+ 
+    for check = 1:numElec
+        %Scatter 
+        if scatOn==1
+            if Pscatter > rand()
+                vx(check)=sqrt(vt^2 /2)*randn();
+                vy(check)=sqrt(vt^2 /2)*randn();
+                tScatter(check)= 0; %If collision, time goes to 0
+            else
+                tScatter(check)= tScatter(check) + dt; %track time increaing while no collision
+            end
+        end
+
+        %Apply boundary conditions 
+        %If bottom contact, bounce off in opposite direction
+        if (y(check)<=0)
+            y(check) = 0;
+            vy(check) = -vy(check);
+        end
+        %If top contact, bounce off in opposite directio
+        if (y(check)>=lArea)
+            y(check) = lArea;
+            vy(check) = -vy(check);
+        end
+        %if left side of box, come out right side 
+        if(x(check)<=0)
+           x(check) = x(check) + wArea;
+        end
+        %if right side of box, come out left side
+        if(x(check)>=wArea)
+          x(check) = x(check) - wArea;
+        end
+    end 
+
+    %Plot Boundary and map some electrons
+    for Eplot = 1:numEPlot
+        figure(1)
+        subplot (3,1,1)
+        %if the electron went out of sides and back on other side, do not
+        %draw line
+        if abs(oldx(Eplot)-x(Eplot))<(wArea/2)
+            p = plot([oldx(Eplot),x(Eplot)],[oldy(Eplot),y(Eplot)]);
+        end
+        p.Color=colors(Eplot,:);
+        axis([0,wArea,0,lArea]);
+        title('Electron Model'), xlabel('Position (m)', 'FontSize', 10), ylabel('Position (m)', 'FontSize', 10);
+        
+        hold on;
+    end 
+    
+    %Calc Average Temp for all t and Plot 
+    subplot (3,1,2)
+    Time(:,intCNT) = t;
+    allT = ((vtot(:).^2).*mn)./(2*kb);
+    avgTemp(:,intCNT) = mean(allT);
+     
+    plot(Time,avgTemp,"r");
+    title('Averge Temp'),xlabel('Time (s)', 'FontSize', 10), ylabel('Temp (K)', 'FontSize', 10), ylim([250,600]); 
+    hold on;
+    intCNT = intCNT +1; 
+    
+    %Histogram of velocities over time 
+    if intCNT > (stepsTot-5)
+        subplot(3,3,7)
+        histogram([vtot(:)],30)
+        title('Velocity Histgram'),xlabel('Velocity (m/s)', 'FontSize', 10), ylabel('Number of Particles', 'FontSize', 10);
+    end
+
+    %Mean time between collision  
+    Time(:,intCNT) = t;
+    allScat(:,intCNT) = mean(tScatter(:));
+    subplot(3,3,8)
+    plot(Time,allScat,'r');
+    title('Mean Time between Collision'),xlabel('Time (s)', 'FontSize', 10), ylabel('Time(s)', 'FontSize', 10);
+    hold on;
+   
+    %Mean Free Path over time 
+    Time(:,intCNT) = t;
+    mfp(:,intCNT) = mean(tScatter(:))*mean(vtot(:));
+    subplot(3,3,9)
+    plot(Time,mfp,'r');
+    title('Mean Free Path '),xlabel('Time (s)', 'FontSize', 10), ylabel('Time(s)', 'FontSize', 10);
+    hold on;
+    
+end 
+
+%% Simulation 3 - Enhancements  
+% Jinseng Vanderkloot 101031534
+%% 
+%Simulation 3 addssolid blocks which electrons will bounce when making
+%contact. The electrons will continue to scatter. There should be some type
+%of re-thermalization electrons make contact with the boxes so a value is
+%added to reduce the velocity therefore reducing temprature. A electron
+%density map and temprature map are displayed. (Some inital values may be
+%changed to reduce simulation time. To improve in the future, use linear
+%indexing). Some bleeding does exsist looking at the density map. 
+%% S3 Initialization of electron values
+
+clc
+clear all
+close all 
+
+%Initial
+m0 = 9.10938215e-31;            % electron mass
+mn = 0.26*m0;                   % Effective mass
+Temp = 300;                     % Inital Temp (K)
+kb = 1.3806504e-23;             % Boltzmann constant
+tmn = 0.2e-12;                  % Mean time between collision 
+
+% Region Area 
+wArea = 200e-9;
+lArea = 100e-9;
+
+%Thermal Velocity (Question 1.A) 
+vt=sqrt((2*kb*Temp)/mn);        % Sim in 2D so (2*kb*Temp), 3D is (3*kb*Temp)
+
+%Electron motion 
+numElec = 1000;                  %Number of simulated Electrons 
+numEPlot = 40;                  %Number of plotted Electrons 
+dt = (lArea*wArea);           %Typically 1/100 of region size
+stepsTot = 50;                 %Total amount of steps (1000 was a long simulation) 
+tTot= stepsTot*dt;              %Total Simulation time 
+x = zeros(1,numElec);           %Inital X matrix          
+y = zeros(1,numElec);           %Inital y matrix  
+vx = zeros(1,numElec);          %Inital velocity x matrix  
+vy = zeros(1,numElec);          %Inital velocity y matrix
+vtot = zeros(1,numElec);        %Inital velocity matrix
+avgTemp=0;                      %Set average Temp to 0 
+
+%Probability of Scatter 
+scatOn = 1;                     %Turn Scatter on (1) or off(0)
+Pscatter = 1-exp(-dt/tmn);      %Scatter Equation 
+tScatter = zeros(1,numElec);
+
+%Bottle Neck Boundary reduced to prevent bleeding 
+% X limit (no particle between X1 and X2 - Cosider Y limits) 
+boxX1=80e-9;
+boxX2=120e-9;
+% Y Limit (no particles between 0 and Y1 and Y2 to Y limit) 
+boxY1 = 40e-9;
+boxY2 = 60e-9;
+
+
+%Electron Graph 
+for cnt = 1:numElec
+    x(cnt)=rand()*wArea;
+    y(cnt)=rand()*lArea;
+    %If the electrons are place in the box, re-roll position
+    while (x(cnt)>=boxX1 && x(cnt)<=boxX2 && (y(cnt)<=boxY1 || y(cnt>=boxY2))) %Relocate them if in boundary
+        x(cnt)=rand()*wArea;
+        y(cnt)=rand()*lArea;
+    end
+    vx(cnt)=sqrt(vt^2)*randn();  % velocity * Gaussian dist   
+    vy(cnt)=sqrt(vt^2)*randn();  % velocity * Gaussian dist 
+    %Varience = sqrt(kT/m) - Do we use this? 
+    vtot(cnt)= sqrt (vx(cnt)^2)+(vy(cnt)^2);
+    colors= rand(numElec,3);
+end
+
+%Boundary Energy/Velocity loss coefficient (reduction in velocity =
+%reduction in temprature) 
+vloss = 0.95; 
+%% S3 Main Loop 
+t=0;
+intCNT = 1; %Counter with time
+while t < tTot
+    t = t + dt; 
+    
+    %Store old position 
+    oldx = x;
+    oldy = y;
+    
+    %Update to new position 
+    x(1:numElec) = x(1:numElec) + (vx(1:numElec).*dt);
+    y(1:numElec) = y(1:numElec) + (vy(1:numElec).*dt);
+    
+    vtot(1:numElec)= sqrt ((vx(1:numElec).^2)+(vy(1:numElec).^2));
+
+    for check = 1:numElec
+        %Scatter 
+        if scatOn==1
+            if Pscatter > rand()
+                vx(check)=sqrt(vt^2 /2)*randn();
+                vy(check)=sqrt(vt^2 /2)*randn();
+                tScatter(check)= 0; %If collision, time goes to 0
+            else
+                tScatter(check)= tScatter(check) + dt; %track time increaing while no collision
+            end
+        end
+
+        %Apply Boundary Conditions 
+        %If bottom contact, bounce off in opposite direction
+        if (y(check)<=0)
+            y(check) = 0;
+            vy(check) = -vy(check);
+        end
+        %If top contact, bounce off in opposite directio
+        if (y(check)>=lArea)
+            y(check) = lArea;
+            vy(check) = -vy(check);
+        end
+        %if left side of box, come out right side 
+        if(x(check)<=0)
+           x(check) = 0;
+           vx(check) = -vx(check);
+        end
+        %if right side of box, come out left side
+        if(x(check)>=wArea)
+           x(check) = wArea;
+           vx(check) = -vx(check);
+        end
+
+        %Apply bottle neck conditions 
+        %If contact on left walls of boundary (not in Gap)
+        if (oldx(check)<boxX1 && x(check)>=boxX1 && (y(check)<= boxY1 || y(check)>= boxY2))
+            x(check)=boxX1;
+            vx(check) = -(vx(check)*vloss); 
+        end
+        %If contact on right walls of boundary (not in Gap)
+        if (oldx(check)>boxX2 && x(check)<=boxX2 && (y(check)<= boxY1 || y(check)>= boxY2))
+            x(check)=boxX2;
+            vx(check) = -(vx(check)*vloss); 
+        end
+        %If contact with bottom boundary in gap
+        if (x(check)>boxX1 && x(check)< boxX2 && oldy(check)>boxY1 && y(check)<= boxY1)
+            y(check)= boxY1;
+            vy(check) = -(vy(check)*vloss); 
+        end
+        %If contact with top boundary in gap 
+        if (x(check)>boxX1 && x(check)< boxX2 && oldy(check)<boxY2 && y(check)>=boxY2)
+            y(check)=boxY2;
+            vy(check) = -(vy(check)*vloss); 
+        end
+    end 
+
+    %Plot Boundary and map some electrons
+    for Eplot = 1:numEPlot
+        figure(1)
+        subplot (2,1,1)
+        %if the electron went out of sides and back on other side, do not
+        %draw line
+        if abs(oldx(Eplot)-x(Eplot))<(wArea/2)
+            p = plot([oldx(Eplot),x(Eplot)],[oldy(Eplot),y(Eplot)]);
+        end
+        rectangle('Position',[boxX1 0 (boxX2-boxX1) boxY1],'FaceColor',[0 0 0])
+        rectangle('Position',[boxX1 boxY2 (boxX2-boxX1) (lArea-boxY2)],'FaceColor',[0 0 0])
+        p.Color=colors(Eplot,:);
+        axis([0,wArea,0,lArea]);
+        title('Electron Model'), xlabel('Position (m)', 'FontSize', 10), ylabel('Position (m)', 'FontSize', 10);
+        
+        hold on;
+    end 
+    %Electron Density Map 
+    eMapX=linspace(0, wArea, 100);
+    eMapY=linspace(0, lArea, 50);
+    EDM=histcounts2(y,x,eMapY,eMapX);
+    subplot(2,2,3)
+    imagesc(eMapY,eMapX,EDM),colorbar,title('Electron Density Map');
+    
+    %Electron Temprature Map 
+    allT = ((vtot(:).^2).*mn)./(2*kb);
+    xv = linspace(min(x), max(x),100);
+    yv = linspace(min(y), max(y),50);
+    [X,Y] = meshgrid(xv,yv);
+    ETM=griddata(x,y,allT,X,Y);
+    subplot(2,2,4);
+    imagesc(xv,yv,ETM),colorbar,title("Temprature Map")
+    axis([0, wArea, 0 lArea]);
+    
+end 
+%% Simulation 4 - Enhancements - Injection
+% JinsengVanderkloot - 101031534
+%% 
+%Section 3-2 has the electrons injected from one point and another box is
+%added. (Some value are changed or reduced to decrease simulation times)
+%% S4 Initialization of individual electron values
+clc
+clear all 
+close all
+
+m0 = 9.10938215e-31;            % electron mass
+mn = 0.26*m0;                   % Effective mass
+Temp = 300;                     % Inital Temp (K)
+kb = 1.3806504e-23;             % Boltzmann constant
+tmn = 0.2e-12;                  % Mean time between collision 
+
+% Region Area 
+wArea = 200e-9;
+lArea = 100e-9;
+
+%Thermal Velocity (Question 1.A) 
+vt=sqrt((2*kb*Temp)/mn);        % Sim in 2D so (2*kb*Temp), 3D is (3*kb*Temp)
+%% S4 Electrons position and velocity arrays
+numElec = 50;                   %Number of simulated Electrons 
+numEPlot = 50;                  %Number of plotted Electrons 
+dt = (lArea*wArea);             %Typically 1/100 of region size
+stepsTot = 100;                 %Total amount of steps (1000 was a long simulation) 
+tTot= stepsTot*dt;              %Total Simulation time 
+x = zeros(1,numElec);           %Inital X matrix          
+y = zeros(1,numElec);           %Inital y matrix  
+vx = zeros(1,numElec);          %Inital velocity x matrix  
+vy = zeros(1,numElec);          %Inital velocity y matrix
+vtot = zeros(1,numElec);        %Inital velocity matrix
+avgTemp=0;                      %Set average Temp to 0 
+
+%Electron color assignment
+for cnt = 1:numElec
+    colors= rand(numElec,3);
+    y(cnt) = 50e-9;
+end
+
+%Probability of Scatter 
+scatOn = 1;                     %Turn Scatter on (1) or off(0)
+Pscatter = 1-exp(-dt/tmn);      %Scatter Equation 
+tScatter = zeros(1,numElec);
+%% S4 Bottle Neck Boundary 
+% X limit (no particle between X1 and X2 - Cosider Y limits) 
+boxX1=80e-9;
+boxX2=120e-9;
+% Y Limit (no particles between 0 and Y1 and Y2 to Y limit) 
+boxY1 = 40e-9;
+boxY2 = 60e-9;
+
+%New Box
+boxX3 = 150e-9;
+boxX4 = 170e-9;
+boxY3 = 40e-9;
+boxY4 = 60e-9;
+
+%Boundary Energy/Velocity loss coefficient, when hitting wall, increase
+%velocity = increase temp, decrease velocity = decrease temp
+vloss = 0.9; 
+%% S4 Main loop 
+t=0;
+intCNT = 1; %Counter with time
+while t < tTot
+    t = t + dt; 
+    
+    %Store old position 
+    oldx = x;
+    oldy = y;
+    
+    %Inject one elctron for each loop iteration
+    if intCNT <= numElec
+        %Add a velocity for injected electron but have it dominate in the y
+        %direction to go towards the gap 
+        vx(intCNT)=0.9*sqrt(vt^2)*abs(randn());  % velocity * Gaussian dist 
+        vy(intCNT)=0.1*sqrt(vt^2)*randn();  % velocity * Gaussian dist 
+        vtot(intCNT)= sqrt (vx(intCNT)^2)+(vy(intCNT)^2);
+    end 
+
+    %Update to new position 
+    x(1:numElec) = x(1:numElec) + (vx(1:numElec).*dt);
+    y(1:numElec) = y(1:numElec) + (vy(1:numElec).*dt);  
+    vtot(1:numElec)= sqrt ((vx(1:numElec).^2)+(vy(1:numElec).^2));
+   
+    for check = 1:numElec
+        %Scatter 
+        if scatOn==1
+            if Pscatter > rand()
+                if vx ~= 0
+                vx(check)=sqrt(vt^2 /2)*randn();
+                vy(check)=sqrt(vt^2 /2)*randn();
+                end
+            end
+        end
+
+        %Apply Boundary Conditions
+        %If bottom contact, bounce off in opposite direction
+        if (y(check)<=0)
+            y(check) = 0;
+            vy(check) = -vy(check);
+        end
+        %If top contact, bounce off in opposite directio
+        if (y(check)>=lArea)
+            y(check) = lArea;
+            vy(check) = -vy(check);
+        end
+        %if left side of box, come out right side 
+        if(x(check)<=0)
+           x(check) = 0;
+           vx(check) = -vx(check);
+        end
+        %if right side of box, come out left side
+        if(x(check)>=wArea)
+           x(check) = wArea;
+           vx(check) = -vx(check);
+        end
+
+        %Apply bottle neck conditions 
+        %If contact on left walls of boundary (not in Gap)
+        if (oldx(check)<boxX1 && x(check)>=boxX1 && (y(check)<= boxY1 || y(check)>= boxY2))
+            x(check)=boxX1;
+            vx(check) = -(vx(check)*vloss); 
+        end
+        %If contact on right walls of boundary (not in Gap)
+        if (oldx(check)>boxX2 && x(check)<=boxX2 && (y(check)<= boxY1 || y(check)>= boxY2))
+            x(check)=boxX2;
+            vx(check) = -(vx(check)*vloss); 
+        end
+        %If contact with bottom boundary in gap
+        if (x(check)>boxX1 && x(check)< boxX2 && oldy(check)>boxY1 && y(check)<= boxY1)
+            y(check)= boxY1;
+            vy(check) = -(vy(check)*vloss); 
+        end
+        %If contact with top boundary in gap 
+        if (x(check)>boxX1 && x(check)< boxX2 && oldy(check)<boxY2 && y(check)>=boxY2)
+            y(check)=boxY2;
+            vy(check) = -(vy(check)*vloss); 
+        end
+
+        %Apply bottle neck conditions for new box 
+        if (oldx(check)<boxX3 && x(check)>=boxX3 && (y(check)<= boxY4 || y(check)>= boxY3))
+            x(check)=boxX3;
+            vx(check) = -(vx(check)*vloss); 
+        end
+        %If contact on right walls of boundary (not in Gap)
+        if (oldx(check)>boxX4 && x(check)<=boxX4 && (y(check)<= boxY4 || y(check)>= boxY3))
+            x(check)=boxX4;
+            vx(check) = -(vx(check)*vloss); 
+        end
+        %If contact with bottom boundary in gap
+        if (x(check)>boxX3 && x(check)< boxX4 && oldy(check)>boxY4 && y(check)<= boxY4)
+            y(check)= boxY4;
+            vy(check) = -(vy(check)*vloss); 
+        end
+        %If contact with top boundary in gap 
+        if (x(check)>boxX3 && x(check)< boxX4 && oldy(check)<boxY3 && y(check)>=boxY3)
+            y(check)=boxY3;
+            vy(check) = -(vy(check)*vloss); 
+        end
+    end 
+
+    %Plot Boundary and map some electrons
+    for Eplot = 1:numEPlot
+        figure(1)
+        %if the electron went out of sides and back on other side, do not
+        %draw line
+        if abs(oldx(Eplot)-x(Eplot))<(wArea/2)
+            p = plot([oldx(Eplot),x(Eplot)],[oldy(Eplot),y(Eplot)]);
+        end
+        rectangle('Position',[boxX1 0 (boxX2-boxX1) boxY1],'FaceColor',[0 0 0])
+        rectangle('Position',[boxX1 boxY2 (boxX2-boxX1) (lArea-boxY2)],'FaceColor',[0 0 0])
+        rectangle('Position',[boxX3 boxY3 (boxX4-boxX3) (boxY4-boxY3)],'FaceColor',[0 0 0])
+        p.Color=colors(Eplot,:);
+        axis([0,wArea,0,lArea]);
+        title('Electron Model'), xlabel('Position (m)', 'FontSize', 10), ylabel('Position (m)', 'FontSize', 10);
+        hold on;
+    end     
+    intCNT = intCNT + 1; 
+ 
+end 
+
+
+
+##### SOURCE END #####
+--></body></html>

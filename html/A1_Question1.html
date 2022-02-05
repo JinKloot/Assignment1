@@ -1,0 +1,308 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Assigment 1 - Question 1</title><meta name="generator" content="MATLAB 9.11"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2022-02-04"><meta name="DC.source" content="A1_Question1.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; }
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+span.typesection { color:#A0522D }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>Assigment 1 - Question 1</h1><!--introduction--><p>Basic Electron Modelling Jinseng Vanderkloot 101031534</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Initialization of individual electron values</a></li><li><a href="#2">Question 1 vth and MFP</a></li><li><a href="#3">Electrons position and velocity arrays</a></li><li><a href="#4">Electron Random Assignments</a></li><li><a href="#5">Main Loop</a></li></ul></div><h2 id="1">Initialization of individual electron values</h2><pre class="codeinput">clc
+clear <span class="string">all</span>
+close <span class="string">all</span>
+
+m0 = 9.10938215e-31;            <span class="comment">% electron mass</span>
+mn = 0.26*m0;                   <span class="comment">% Effective mass</span>
+Temp = 300;                     <span class="comment">% Inital Temp (K)</span>
+kb = 1.3806504e-23;             <span class="comment">% Boltzmann constant</span>
+tmn = 0.2e-12;                  <span class="comment">% Mean time between collision</span>
+</pre><h2 id="2">Question 1 vth and MFP</h2><pre class="codeinput"><span class="comment">%Thermal Velocity (Question 1.A)</span>
+vt=sqrt((2*kb*Temp)/mn);        <span class="comment">% Sim in 2D so (2*kb*Temp), 3D is (3*kb*Temp)</span>
+fprintf(<span class="string">"Thermal Velocity = %d m/s \n"</span>, vt);
+
+<span class="comment">% Mean free path (Velocity * minimum time between collision) (Question 1.B)</span>
+meanFreePath = vt * tmn;
+fprintf(<span class="string">"Mean free path = %d \n"</span>, meanFreePath);
+</pre><pre class="codeoutput">Thermal Velocity = 1.870193e+05 m/s 
+Mean free path = 3.740385e-08 
+</pre><h2 id="3">Electrons position and velocity arrays</h2><pre class="codeinput"><span class="comment">% Plotting Area</span>
+wArea = 200e-9;
+lArea = 100e-9;
+
+numElec = 1000;                 <span class="comment">%Number of simulated Electrons</span>
+numEPlot = 10;                  <span class="comment">%Number of plotted Electrons</span>
+dt = (lArea*wArea);             <span class="comment">%Typically 1/100 of region size</span>
+stepsTot = 200;                 <span class="comment">%Total amount of steps (1000 was a long simulation)</span>
+tTot= stepsTot*dt;              <span class="comment">%Total Simulation time</span>
+x = zeros(1,numElec);           <span class="comment">%Inital X matrix</span>
+y = zeros(1,numElec);           <span class="comment">%Inital y matrix</span>
+vx = zeros(1,numElec);          <span class="comment">%Inital velocity x matrix</span>
+vy = zeros(1,numElec);          <span class="comment">%Inital velocity y matrix</span>
+vtot = zeros(1,numElec);        <span class="comment">%Inital velocity matrix</span>
+colors = rand(numElec,3);       <span class="comment">%Color assignment for each electron</span>
+</pre><h2 id="4">Electron Random Assignments</h2><pre class="codeinput"><span class="keyword">for</span> cnt = 1:numElec
+    x(cnt)=rand()*wArea;
+    y(cnt)=rand()*lArea;
+    angle = (2*pi*rand());
+    vx(cnt)=sqrt(vt^2)*cos(angle);   <span class="comment">% velocity * random direction</span>
+    vy(cnt)=sqrt(vt^2)*sin(angle);   <span class="comment">% velocity * random direction</span>
+    vtot(cnt)= sqrt (vx(cnt)^2)+(vy(cnt)^2);
+<span class="keyword">end</span>
+</pre><h2 id="5">Main Loop</h2><pre class="codeinput">t=0;
+intCNT = 2;
+<span class="keyword">while</span> t &lt; tTot
+    t = t + dt;
+
+    <span class="comment">%Store old position</span>
+    oldx = x;
+    oldy = y;
+
+    <span class="comment">%Update to new position</span>
+    x(1:numElec) = x(1:numElec) + (vx(1:numElec).*dt);
+    y(1:numElec) = y(1:numElec) + (vy(1:numElec).*dt);
+
+    vtot(1:numElec)= sqrt ((vx(1:numElec).^2)+(vy(1:numElec).^2));
+
+    <span class="comment">%Apply boundary conditions</span>
+    <span class="keyword">for</span> check = 1:numElec
+        <span class="comment">%If bottom contact, bounce off in opposite direction</span>
+        <span class="keyword">if</span> (y(check)&lt;=0)
+            y(check) = 0;
+            vy(check) = -vy(check);
+        <span class="keyword">end</span>
+        <span class="comment">%If top contact, bounce off in opposite directio</span>
+        <span class="keyword">if</span> (y(check)&gt;=lArea)
+            y(check) = lArea;
+            vy(check) = -vy(check);
+        <span class="keyword">end</span>
+        <span class="comment">%if left side of box, come out right side</span>
+        <span class="keyword">if</span>(x(check)&lt;=0)
+           x(check) = x(check) + wArea;
+        <span class="keyword">end</span>
+        <span class="comment">%if right side of box, come out left side</span>
+        <span class="keyword">if</span>(x(check)&gt;=wArea)
+          x(check) = x(check) - wArea;
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+
+    <span class="comment">%Plot Boundary and map some electrons</span>
+    <span class="keyword">for</span> Eplot = 1:numEPlot
+        subplot (2,1,1)
+        <span class="comment">%if the electron went out of sides and back on other side, do not</span>
+        <span class="comment">%draw line</span>
+        <span class="keyword">if</span> abs(oldx(Eplot)-x(Eplot))&lt;(wArea/2)
+            p = plot([oldx(Eplot),x(Eplot)],[oldy(Eplot),y(Eplot)]);
+        <span class="keyword">end</span>
+        p.Color=colors(Eplot,:);
+        axis([0,wArea,0,lArea]);
+        title(<span class="string">'Electron Model'</span>), xlabel(<span class="string">'Position (m)'</span>, <span class="string">'FontSize'</span>, 10), ylabel(<span class="string">'Position (m)'</span>, <span class="string">'FontSize'</span>, 10);
+
+        hold <span class="string">on</span>;
+    <span class="keyword">end</span>
+    pause(0.01);
+
+    <span class="comment">%Plot Averge Temprature in the system</span>
+    subplot (2,1,2)
+    Time(:,intCNT) = t;
+    allT = ((vtot(:).^2).*mn)./(2*kb);
+    eTemp(:,intCNT) = mean(allT);
+
+    plot(Time,eTemp,<span class="string">"r"</span>);
+    title(<span class="string">'Averge Temp'</span>),xlabel(<span class="string">'Time (s)'</span>, <span class="string">'FontSize'</span>, 10), ylabel(<span class="string">'Temp (K)'</span>, <span class="string">'FontSize'</span>, 10), ylim([299,301]);
+    hold <span class="string">on</span>;
+    intCNT = intCNT +1;
+
+<span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="A1_Question1_01.png" alt=""> <p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2021b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Assigment 1 - Question 1
+% Basic Electron Modelling 
+% Jinseng Vanderkloot 101031534
+%% Initialization of individual electron values
+clc
+clear all 
+close all
+
+m0 = 9.10938215e-31;            % electron mass
+mn = 0.26*m0;                   % Effective mass
+Temp = 300;                     % Inital Temp (K)
+kb = 1.3806504e-23;             % Boltzmann constant
+tmn = 0.2e-12;                  % Mean time between collision 
+
+%% Question 1 vth and MFP
+
+%Thermal Velocity (Question 1.A) 
+vt=sqrt((2*kb*Temp)/mn);        % Sim in 2D so (2*kb*Temp), 3D is (3*kb*Temp)
+fprintf("Thermal Velocity = %d m/s \n", vt);
+
+% Mean free path (Velocity * minimum time between collision) (Question 1.B)
+meanFreePath = vt * tmn;
+fprintf("Mean free path = %d \n", meanFreePath);
+
+%% Electrons position and velocity arrays
+
+% Plotting Area 
+wArea = 200e-9;
+lArea = 100e-9;
+
+numElec = 1000;                 %Number of simulated Electrons 
+numEPlot = 10;                  %Number of plotted Electrons 
+dt = (lArea*wArea);             %Typically 1/100 of region size
+stepsTot = 200;                 %Total amount of steps (1000 was a long simulation) 
+tTot= stepsTot*dt;              %Total Simulation time 
+x = zeros(1,numElec);           %Inital X matrix          
+y = zeros(1,numElec);           %Inital y matrix  
+vx = zeros(1,numElec);          %Inital velocity x matrix  
+vy = zeros(1,numElec);          %Inital velocity y matrix
+vtot = zeros(1,numElec);        %Inital velocity matrix
+colors = rand(numElec,3);       %Color assignment for each electron                   
+
+
+%% Electron Random Assignments
+for cnt = 1:numElec
+    x(cnt)=rand()*wArea;
+    y(cnt)=rand()*lArea;
+    angle = (2*pi*rand());
+    vx(cnt)=sqrt(vt^2)*cos(angle);   % velocity * random direction   
+    vy(cnt)=sqrt(vt^2)*sin(angle);   % velocity * random direction
+    vtot(cnt)= sqrt (vx(cnt)^2)+(vy(cnt)^2);
+end
+%% Main Loop 
+
+t=0;
+intCNT = 2;
+while t < tTot
+    t = t + dt; 
+    
+    %Store old position 
+    oldx = x;
+    oldy = y;
+    
+    %Update to new position 
+    x(1:numElec) = x(1:numElec) + (vx(1:numElec).*dt);
+    y(1:numElec) = y(1:numElec) + (vy(1:numElec).*dt);
+    
+    vtot(1:numElec)= sqrt ((vx(1:numElec).^2)+(vy(1:numElec).^2));
+    
+    %Apply boundary conditions 
+    for check = 1:numElec
+        %If bottom contact, bounce off in opposite direction
+        if (y(check)<=0)
+            y(check) = 0;
+            vy(check) = -vy(check);
+        end
+        %If top contact, bounce off in opposite directio
+        if (y(check)>=lArea)
+            y(check) = lArea;
+            vy(check) = -vy(check);
+        end
+        %if left side of box, come out right side 
+        if(x(check)<=0)
+           x(check) = x(check) + wArea;
+        end
+        %if right side of box, come out left side
+        if(x(check)>=wArea)
+          x(check) = x(check) - wArea;
+        end
+    end 
+
+    %Plot Boundary and map some electrons
+    for Eplot = 1:numEPlot
+        subplot (2,1,1)
+        %if the electron went out of sides and back on other side, do not
+        %draw line
+        if abs(oldx(Eplot)-x(Eplot))<(wArea/2)
+            p = plot([oldx(Eplot),x(Eplot)],[oldy(Eplot),y(Eplot)]);
+        end
+        p.Color=colors(Eplot,:);
+        axis([0,wArea,0,lArea]);
+        title('Electron Model'), xlabel('Position (m)', 'FontSize', 10), ylabel('Position (m)', 'FontSize', 10);
+        
+        hold on;
+    end 
+    pause(0.01);
+    
+    %Plot Averge Temprature in the system
+    subplot (2,1,2)
+    Time(:,intCNT) = t;
+    allT = ((vtot(:).^2).*mn)./(2*kb);
+    eTemp(:,intCNT) = mean(allT);
+     
+    plot(Time,eTemp,"r");
+    title('Averge Temp'),xlabel('Time (s)', 'FontSize', 10), ylabel('Temp (K)', 'FontSize', 10), ylim([299,301]); 
+    hold on;
+    intCNT = intCNT +1; 
+
+end 
+
+
+
+
+
+
+
+
+
+
+##### SOURCE END #####
+--></body></html>

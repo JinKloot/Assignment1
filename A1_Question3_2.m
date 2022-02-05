@@ -1,5 +1,9 @@
 %% Assignment 1 - Simulation 3 - 2
 % Enhancements - Injection 
+% JinsengVanderkloot - 101031534
+%% 
+%Section 3-2 has the electrons injected from one point and another box is
+%added. (Some value are changed or reduced to decrease simulation times)
 %% Initialization of individual electron values
 m0 = 9.10938215e-31;            % electron mass
 mn = 0.26*m0;                   % Effective mass
@@ -17,7 +21,7 @@ vt=sqrt((2*kb*Temp)/mn);        % Sim in 2D so (2*kb*Temp), 3D is (3*kb*Temp)
 numElec = 20;                   %Number of simulated Electrons 
 numEPlot = 20;                  %Number of plotted Electrons 
 dt = (lArea*wArea);             %Typically 1/100 of region size
-stepsTot = 200;                 %Total amount of steps (1000 was a long simulation) 
+stepsTot = 50;                 %Total amount of steps (1000 was a long simulation) 
 tTot= stepsTot*dt;              %Total Simulation time 
 x = zeros(1,numElec);           %Inital X matrix          
 y = zeros(1,numElec);           %Inital y matrix  
@@ -66,8 +70,8 @@ while t < tTot
     %Inject one elctron for each loop iteration
     if intCNT <= numElec
         %Add a velocity for injected electron 
-        vx(intCNT)=sqrt(vt^2)*abs(randn());  % velocity * Gaussian dist   
-        vy(intCNT)=sqrt(vt^2)*randn();  % velocity * Gaussian dist 
+        vx(intCNT)=0.9*sqrt(vt^2)*abs(randn());  % velocity * Gaussian dist   
+        vy(intCNT)=0.1*sqrt(vt^2)*randn();  % velocity * Gaussian dist 
         vtot(intCNT)= sqrt (vx(intCNT)^2)+(vy(intCNT)^2);
     end 
 

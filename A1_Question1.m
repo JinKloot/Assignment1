@@ -63,6 +63,7 @@ end
 
 t=0;
 intCNT = 2;
+eTemp(1) = Temp;
 while t < tTot
     t = t + dt; 
     
