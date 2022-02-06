@@ -1,10 +1,13 @@
-%% Assignment 1 - Simulation 3 - 2
-% Enhancements - Injection 
+%% Simulation 4 - Enhancements - Injection
 % JinsengVanderkloot - 101031534
 %% 
 %Section 3-2 has the electrons injected from one point and another box is
 %added. (Some value are changed or reduced to decrease simulation times)
-%% Initialization of individual electron values
+%% S4 Initialization of individual electron values
+clc
+clear all 
+close all
+
 m0 = 9.10938215e-31;            % electron mass
 mn = 0.26*m0;                   % Effective mass
 Temp = 300;                     % Inital Temp (K)
@@ -17,11 +20,11 @@ lArea = 100e-9;
 
 %Thermal Velocity (Question 1.A) 
 vt=sqrt((2*kb*Temp)/mn);        % Sim in 2D so (2*kb*Temp), 3D is (3*kb*Temp)
-%% Electrons position and velocity arrays
-numElec = 20;                   %Number of simulated Electrons 
-numEPlot = 20;                  %Number of plotted Electrons 
+%% S4 Electrons position and velocity arrays
+numElec = 50;                   %Number of simulated Electrons 
+numEPlot = 50;                  %Number of plotted Electrons 
 dt = (lArea*wArea);             %Typically 1/100 of region size
-stepsTot = 50;                 %Total amount of steps (1000 was a long simulation) 
+stepsTot = 150;                 %Total amount of steps (1000 was a long simulation) 
 tTot= stepsTot*dt;              %Total Simulation time 
 x = zeros(1,numElec);           %Inital X matrix          
 y = zeros(1,numElec);           %Inital y matrix  
@@ -40,7 +43,7 @@ end
 scatOn = 1;                     %Turn Scatter on (1) or off(0)
 Pscatter = 1-exp(-dt/tmn);      %Scatter Equation 
 tScatter = zeros(1,numElec);
-%% Bottle Neck Boundary 
+%% S4 Bottle Neck Boundary 
 % X limit (no particle between X1 and X2 - Cosider Y limits) 
 boxX1=80e-9;
 boxX2=120e-9;
@@ -49,15 +52,15 @@ boxY1 = 40e-9;
 boxY2 = 60e-9;
 
 %New Box
-boxX3 = 140e-9;
-boxX4 = 160e-9;
+boxX3 = 150e-9;
+boxX4 = 170e-9;
 boxY3 = 40e-9;
 boxY4 = 60e-9;
 
 %Boundary Energy/Velocity loss coefficient, when hitting wall, increase
 %velocity = increase temp, decrease velocity = decrease temp
-vloss = 1.1; 
-%% Main loop 
+vloss = 0.95; 
+%% S4 Main loop 
 t=0;
 intCNT = 1; %Counter with time
 while t < tTot
@@ -69,8 +72,9 @@ while t < tTot
     
     %Inject one elctron for each loop iteration
     if intCNT <= numElec
-        %Add a velocity for injected electron 
-        vx(intCNT)=0.9*sqrt(vt^2)*abs(randn());  % velocity * Gaussian dist   
+        %Add a velocity for injected electron but have it dominate in the y
+        %direction to go towards the gap 
+        vx(intCNT)=0.9*sqrt(vt^2)*abs(randn());  % velocity * Gaussian dist 
         vy(intCNT)=0.1*sqrt(vt^2)*randn();  % velocity * Gaussian dist 
         vtot(intCNT)= sqrt (vx(intCNT)^2)+(vy(intCNT)^2);
     end 
@@ -136,12 +140,13 @@ while t < tTot
         end
 
         %Apply bottle neck conditions for new box 
-        if (oldx(check)<boxX3 && x(check)>=boxX3 && (y(check)<= boxY4 || y(check)>= boxY3))
+        %If contact with left wall 
+        if (oldx(check)<boxX3 && x(check)>=boxX3 && y(check)>= boxY3 && y(check)<= boxY4)
             x(check)=boxX3;
             vx(check) = -(vx(check)*vloss); 
         end
-        %If contact on right walls of boundary (not in Gap)
-        if (oldx(check)>boxX4 && x(check)<=boxX4 && (y(check)<= boxY4 || y(check)>= boxY3))
+        %If contact on right walls of boundary
+        if (oldx(check)>boxX4 && x(check)<=boxX4 && y(check)>= boxY3 && y(check)<= boxY4)
             x(check)=boxX4;
             vx(check) = -(vx(check)*vloss); 
         end
@@ -170,11 +175,9 @@ while t < tTot
         rectangle('Position',[boxX3 boxY3 (boxX4-boxX3) (boxY4-boxY3)],'FaceColor',[0 0 0])
         p.Color=colors(Eplot,:);
         axis([0,wArea,0,lArea]);
-        ptitle=['Electron Model steps (',intCNT, '/',stepsTot];
-        title(ptitle), xlabel('Position (m)', 'FontSize', 10), ylabel('Position (m)', 'FontSize', 10);
+        title('Electron Model'), xlabel('Position (m)', 'FontSize', 10), ylabel('Position (m)', 'FontSize', 10);
         hold on;
-    end 
-    pause(0.01);    
+    end     
     intCNT = intCNT + 1; 
  
 end 

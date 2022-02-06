@@ -365,7 +365,6 @@ y = zeros(1,numElec);           <span class="comment">%Inital y matrix</span>
 vx = zeros(1,numElec);          <span class="comment">%Inital velocity x matrix</span>
 vy = zeros(1,numElec);          <span class="comment">%Inital velocity y matrix</span>
 vtot = zeros(1,numElec);        <span class="comment">%Inital velocity matrix</span>
-avgTemp=0;                      <span class="comment">%Set average Temp to 0</span>
 
 <span class="comment">%Probability of Scatter</span>
 scatOn = 1;                     <span class="comment">%Turn Scatter on (1) or off(0)</span>
@@ -401,7 +400,6 @@ boxY2 = 60e-9;
 <span class="comment">%reduction in temprature)</span>
 vloss = 0.95;
 </pre><h2 id="15">S3 Main Loop</h2><pre class="codeinput">t=0;
-intCNT = 1; <span class="comment">%Counter with time</span>
 <span class="keyword">while</span> t &lt; tTot
     t = t + dt;
 
@@ -530,7 +528,7 @@ vt=sqrt((2*kb*Temp)/mn);        <span class="comment">% Sim in 2D so (2*kb*Temp)
 </pre><h2 id="19">S4 Electrons position and velocity arrays</h2><pre class="codeinput">numElec = 50;                   <span class="comment">%Number of simulated Electrons</span>
 numEPlot = 50;                  <span class="comment">%Number of plotted Electrons</span>
 dt = (lArea*wArea);             <span class="comment">%Typically 1/100 of region size</span>
-stepsTot = 100;                 <span class="comment">%Total amount of steps (1000 was a long simulation)</span>
+stepsTot = 120;                 <span class="comment">%Total amount of steps (1000 was a long simulation)</span>
 tTot= stepsTot*dt;              <span class="comment">%Total Simulation time</span>
 x = zeros(1,numElec);           <span class="comment">%Inital X matrix</span>
 y = zeros(1,numElec);           <span class="comment">%Inital y matrix</span>
@@ -563,7 +561,7 @@ boxY4 = 60e-9;
 
 <span class="comment">%Boundary Energy/Velocity loss coefficient, when hitting wall, increase</span>
 <span class="comment">%velocity = increase temp, decrease velocity = decrease temp</span>
-vloss = 0.9;
+vloss = 0.95;
 </pre><h2 id="21">S4 Main loop</h2><pre class="codeinput">t=0;
 intCNT = 1; <span class="comment">%Counter with time</span>
 <span class="keyword">while</span> t &lt; tTot
@@ -643,12 +641,13 @@ intCNT = 1; <span class="comment">%Counter with time</span>
         <span class="keyword">end</span>
 
         <span class="comment">%Apply bottle neck conditions for new box</span>
-        <span class="keyword">if</span> (oldx(check)&lt;boxX3 &amp;&amp; x(check)&gt;=boxX3 &amp;&amp; (y(check)&lt;= boxY4 || y(check)&gt;= boxY3))
+        <span class="comment">%If contact with left wall</span>
+        <span class="keyword">if</span> (oldx(check)&lt;boxX3 &amp;&amp; x(check)&gt;=boxX3 &amp;&amp; y(check)&gt;= boxY3 &amp;&amp; y(check)&lt;= boxY4)
             x(check)=boxX3;
             vx(check) = -(vx(check)*vloss);
         <span class="keyword">end</span>
-        <span class="comment">%If contact on right walls of boundary (not in Gap)</span>
-        <span class="keyword">if</span> (oldx(check)&gt;boxX4 &amp;&amp; x(check)&lt;=boxX4 &amp;&amp; (y(check)&lt;= boxY4 || y(check)&gt;= boxY3))
+        <span class="comment">%If contact on right walls of boundary</span>
+        <span class="keyword">if</span> (oldx(check)&gt;boxX4 &amp;&amp; x(check)&lt;=boxX4 &amp;&amp; y(check)&gt;= boxY3 &amp;&amp; y(check)&lt;= boxY4)
             x(check)=boxX4;
             vx(check) = -(vx(check)*vloss);
         <span class="keyword">end</span>
@@ -1020,7 +1019,6 @@ y = zeros(1,numElec);           %Inital y matrix
 vx = zeros(1,numElec);          %Inital velocity x matrix  
 vy = zeros(1,numElec);          %Inital velocity y matrix
 vtot = zeros(1,numElec);        %Inital velocity matrix
-avgTemp=0;                      %Set average Temp to 0 
 
 %Probability of Scatter 
 scatOn = 1;                     %Turn Scatter on (1) or off(0)
@@ -1057,7 +1055,6 @@ end
 vloss = 0.95; 
 %% S3 Main Loop 
 t=0;
-intCNT = 1; %Counter with time
 while t < tTot
     t = t + dt; 
     
@@ -1189,7 +1186,7 @@ vt=sqrt((2*kb*Temp)/mn);        % Sim in 2D so (2*kb*Temp), 3D is (3*kb*Temp)
 numElec = 50;                   %Number of simulated Electrons 
 numEPlot = 50;                  %Number of plotted Electrons 
 dt = (lArea*wArea);             %Typically 1/100 of region size
-stepsTot = 100;                 %Total amount of steps (1000 was a long simulation) 
+stepsTot = 120;                 %Total amount of steps (1000 was a long simulation) 
 tTot= stepsTot*dt;              %Total Simulation time 
 x = zeros(1,numElec);           %Inital X matrix          
 y = zeros(1,numElec);           %Inital y matrix  
@@ -1224,7 +1221,7 @@ boxY4 = 60e-9;
 
 %Boundary Energy/Velocity loss coefficient, when hitting wall, increase
 %velocity = increase temp, decrease velocity = decrease temp
-vloss = 0.9; 
+vloss = 0.95; 
 %% S4 Main loop 
 t=0;
 intCNT = 1; %Counter with time
@@ -1305,12 +1302,13 @@ while t < tTot
         end
 
         %Apply bottle neck conditions for new box 
-        if (oldx(check)<boxX3 && x(check)>=boxX3 && (y(check)<= boxY4 || y(check)>= boxY3))
+        %If contact with left wall 
+        if (oldx(check)<boxX3 && x(check)>=boxX3 && y(check)>= boxY3 && y(check)<= boxY4)
             x(check)=boxX3;
             vx(check) = -(vx(check)*vloss); 
         end
-        %If contact on right walls of boundary (not in Gap)
-        if (oldx(check)>boxX4 && x(check)<=boxX4 && (y(check)<= boxY4 || y(check)>= boxY3))
+        %If contact on right walls of boundary
+        if (oldx(check)>boxX4 && x(check)<=boxX4 && y(check)>= boxY3 && y(check)<= boxY4)
             x(check)=boxX4;
             vx(check) = -(vx(check)*vloss); 
         end
@@ -1345,7 +1343,6 @@ while t < tTot
     intCNT = intCNT + 1; 
  
 end 
-
 
 
 ##### SOURCE END #####

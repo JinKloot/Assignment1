@@ -333,7 +333,6 @@ y = zeros(1,numElec);           %Inital y matrix
 vx = zeros(1,numElec);          %Inital velocity x matrix  
 vy = zeros(1,numElec);          %Inital velocity y matrix
 vtot = zeros(1,numElec);        %Inital velocity matrix
-avgTemp=0;                      %Set average Temp to 0 
 
 %Probability of Scatter 
 scatOn = 1;                     %Turn Scatter on (1) or off(0)
@@ -370,7 +369,6 @@ end
 vloss = 0.95; 
 %% S3 Main Loop 
 t=0;
-intCNT = 1; %Counter with time
 while t < tTot
     t = t + dt; 
     
@@ -502,7 +500,7 @@ vt=sqrt((2*kb*Temp)/mn);        % Sim in 2D so (2*kb*Temp), 3D is (3*kb*Temp)
 numElec = 50;                   %Number of simulated Electrons 
 numEPlot = 50;                  %Number of plotted Electrons 
 dt = (lArea*wArea);             %Typically 1/100 of region size
-stepsTot = 100;                 %Total amount of steps (1000 was a long simulation) 
+stepsTot = 120;                 %Total amount of steps (1000 was a long simulation) 
 tTot= stepsTot*dt;              %Total Simulation time 
 x = zeros(1,numElec);           %Inital X matrix          
 y = zeros(1,numElec);           %Inital y matrix  
@@ -537,7 +535,7 @@ boxY4 = 60e-9;
 
 %Boundary Energy/Velocity loss coefficient, when hitting wall, increase
 %velocity = increase temp, decrease velocity = decrease temp
-vloss = 0.9; 
+vloss = 0.95; 
 %% S4 Main loop 
 t=0;
 intCNT = 1; %Counter with time
@@ -618,12 +616,13 @@ while t < tTot
         end
 
         %Apply bottle neck conditions for new box 
-        if (oldx(check)<boxX3 && x(check)>=boxX3 && (y(check)<= boxY4 || y(check)>= boxY3))
+        %If contact with left wall 
+        if (oldx(check)<boxX3 && x(check)>=boxX3 && y(check)>= boxY3 && y(check)<= boxY4)
             x(check)=boxX3;
             vx(check) = -(vx(check)*vloss); 
         end
-        %If contact on right walls of boundary (not in Gap)
-        if (oldx(check)>boxX4 && x(check)<=boxX4 && (y(check)<= boxY4 || y(check)>= boxY3))
+        %If contact on right walls of boundary
+        if (oldx(check)>boxX4 && x(check)<=boxX4 && y(check)>= boxY3 && y(check)<= boxY4)
             x(check)=boxX4;
             vx(check) = -(vx(check)*vloss); 
         end
@@ -658,5 +657,4 @@ while t < tTot
     intCNT = intCNT + 1; 
  
 end 
-
 
