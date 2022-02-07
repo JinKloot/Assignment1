@@ -1,16 +1,15 @@
-%% Assigment 1 - Simulation 1
-% Basic Electron Modelling - 
+%% Simulation 1- Basic Electron Modelling 
 % Jinseng Vanderkloot 101031534
 %% 
 % The purpose of Simulation 1 is to place electrons randomly inside the 
 % designated area. They will all have the same relative velocity but travel
 % in random directions. When they make contact with the top or bottom
 % boundary, they will "bounce" off them and travel in the opposite
-% direction. When they encounter the side walls, the electron will travel
+% direction. When they encounter side walls, the electron will "teleport"
 % from one side to the other to maintain the electron density in the 
 % designated area 
 
-%% Initialization of individual electron values
+%% S1 Initialization of individual electron values
 clc
 clear all 
 close all
@@ -21,7 +20,7 @@ Temp = 300;                     % Inital Temp (K)
 kb = 1.3806504e-23;             % Boltzmann constant
 tmn = 0.2e-12;                  % Mean time between collision 
 
-%% vth and MFP
+%% S1 vth and MFP
 
 %Thermal Velocity (Question 1.A) 
 vt=sqrt((2*kb*Temp)/mn);        % Sim in 2D so (2*kb*Temp), 3D is (3*kb*Temp)
@@ -31,7 +30,7 @@ fprintf("Thermal Velocity = %d m/s \n", vt);
 meanFreePath = vt * tmn;
 fprintf("Mean free path = %d \n", meanFreePath);
 
-%% Electrons position and velocity arrays
+%% S1 Electrons position and velocity arrays
 
 % Plotting Area 
 wArea = 200e-9;
@@ -50,16 +49,16 @@ vtot = zeros(1,numElec);        %Inital velocity matrix
 colors = rand(numElec,3);       %Color assignment for each electron                   
 
 
-%% Electron Random Assignments
+%% S1 Electron Random Assignments
 for cnt = 1:numElec
     x(cnt)=rand()*wArea;
     y(cnt)=rand()*lArea;
     angle = (2*pi*rand());
-    vx(cnt)=sqrt(vt^2)*cos(angle);   % velocity * random direction   
-    vy(cnt)=sqrt(vt^2)*sin(angle);   % velocity * random direction
-    vtot(cnt)= sqrt (vx(cnt)^2)+(vy(cnt)^2);
+    vx(cnt)=vt*cos(angle);   % velocity * random direction   
+    vy(cnt)=vt*sin(angle);   % velocity * random direction
+%     vtot(cnt)= sqrt (vx(cnt)^2)+(vy(cnt)^2);
 end
-%% Main Loop 
+%% S1 Main Loop 
 
 t=0;
 intCNT = 2;
@@ -75,7 +74,7 @@ while t < tTot
     x(1:numElec) = x(1:numElec) + (vx(1:numElec).*dt);
     y(1:numElec) = y(1:numElec) + (vy(1:numElec).*dt);
     
-    vtot(1:numElec)= sqrt ((vx(1:numElec).^2)+(vy(1:numElec).^2));
+    vtot(1:numElec)= sqrt((vx(1:numElec).^2)+(vy(1:numElec).^2));
     
     %Apply boundary conditions 
     for check = 1:numElec
@@ -122,7 +121,7 @@ while t < tTot
     eTemp(:,intCNT) = mean(allT);
      
     plot(Time,eTemp,"r");
-    title('Averge Temp'),xlabel('Time (s)', 'FontSize', 10), ylabel('Temp (K)', 'FontSize', 10), ylim([299,301]); 
+    title('Averge Temp'),xlabel('Time (s)', 'FontSize', 10), ylabel('Temp (K)', 'FontSize', 10),ylim([299,301]); 
     hold on;
     intCNT = intCNT +1; 
 

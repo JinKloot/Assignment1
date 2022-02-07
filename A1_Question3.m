@@ -1,7 +1,15 @@
-%% Assignment 1 - Simulation 3 - 1
-% Enhancements - 
+%% Simulation 3 - Enhancements 
 % Jinseng Vanderkloot 101031534
-%% Initialization of electron values
+%% 
+%Simulation 3 adds solid blocks into the area and the electons will "bounce" 
+% off the walls when making contact. The electrons will continue to scatter. 
+% There should be some type of re-thermalization for the electrons which 
+% make contact with the boxes so a value is added to reduce the velocity 
+%therefore reducing temprature when contact is make (vloss). An electron
+%density map and temprature map is displayed. (Some inital values may be
+%changed to reduce simulation time. To improve in the future, use linear
+%indexing). Some bleeding or error does exsist looking at the density map. 
+%% S3 Initialization of electron values
 
 clc
 clear all
@@ -57,8 +65,8 @@ for cnt = 1:numElec
         x(cnt)=rand()*wArea;
         y(cnt)=rand()*lArea;
     end
-    vx(cnt)=sqrt(vt^2)*randn();  % velocity * Gaussian dist   
-    vy(cnt)=sqrt(vt^2)*randn();  % velocity * Gaussian dist 
+    vx(cnt)=(vt/sqrt(2))*randn();  % velocity * Gaussian dist   
+    vy(cnt)=(vt/sqrt(2))*randn();  % velocity * Gaussian dist 
     %Varience = sqrt(kT/m) - Do we use this? 
     vtot(cnt)= sqrt (vx(cnt)^2)+(vy(cnt)^2);
     colors= rand(numElec,3);
@@ -67,7 +75,7 @@ end
 %Boundary Energy/Velocity loss coefficient (reduction in velocity =
 %reduction in temprature) 
 vloss = 0.95; 
-%% Main Loop 
+%% S3 Main Loop 
 t=0;
 intCNT = 1; %Counter with time
 while t < tTot
@@ -87,8 +95,8 @@ while t < tTot
         %Scatter 
         if scatOn==1
             if Pscatter > rand()
-                vx(check)=sqrt(vt^2 /2)*randn();
-                vy(check)=sqrt(vt^2 /2)*randn();
+                vx(check)=(vt/sqrt(2))*randn();
+                vy(check)=(vt/sqrt(2))*randn();
                 tScatter(check)= 0; %If collision, time goes to 0
             else
                 tScatter(check)= tScatter(check) + dt; %track time increaing while no collision

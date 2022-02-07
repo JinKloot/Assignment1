@@ -1,16 +1,15 @@
 %% Assigment 1 - Monte-Carlo Modeling of Electron Transport 
 % Jinseng Vanderkloot 101031534
-%% Simulation 1 - Basic Electron Modelling
+%% Simulation 1- Basic Electron Modelling 
 % Jinseng Vanderkloot 101031534
 %% 
 % The purpose of Simulation 1 is to place electrons randomly inside the 
-% designated area. They will all have the same relative velocity but travel
-% in random directions. When they make contact with the top or bottom
-% boundary, they will "bounce" off them and travel in the opposite
-% direction. When they encounter the side walls, the electron will travel
+% designated area. They will all have the same relative velocity but 
+% travel in random directions. When they make contact with the top or 
+% bottom boundary, they will "bounce" off them and travel in the opposite 
+% direction. When they encounter side walls, the electron will "teleport" 
 % from one side to the other to maintain the electron density in the 
-% designated area. Pauses removed from report simulation. 
-
+% designated area. 
 %% S1 Initialization of individual electron values
 clc
 clear all 
@@ -41,7 +40,7 @@ lArea = 100e-9;
 numElec = 1000;                 %Number of simulated Electrons 
 numEPlot = 10;                  %Number of plotted Electrons 
 dt = (lArea*wArea);             %Typically 1/100 of region size
-stepsTot = 100;                 %Total amount of steps (1000 was a long simulation) 
+stepsTot = 200;                 %Total amount of steps (1000 was a long simulation) 
 tTot= stepsTot*dt;              %Total Simulation time 
 x = zeros(1,numElec);           %Inital X matrix          
 y = zeros(1,numElec);           %Inital y matrix  
@@ -56,9 +55,9 @@ for cnt = 1:numElec
     x(cnt)=rand()*wArea;
     y(cnt)=rand()*lArea;
     angle = (2*pi*rand());
-    vx(cnt)=sqrt(vt^2)*cos(angle);   % velocity * random direction   
-    vy(cnt)=sqrt(vt^2)*sin(angle);   % velocity * random direction
-    vtot(cnt)= sqrt (vx(cnt)^2)+(vy(cnt)^2);
+    vx(cnt)=vt*cos(angle);   % velocity * random direction   
+    vy(cnt)=vt*sin(angle);   % velocity * random direction
+%     vtot(cnt)= sqrt (vx(cnt)^2)+(vy(cnt)^2);
 end
 %% S1 Main Loop 
 
@@ -76,7 +75,7 @@ while t < tTot
     x(1:numElec) = x(1:numElec) + (vx(1:numElec).*dt);
     y(1:numElec) = y(1:numElec) + (vy(1:numElec).*dt);
     
-    vtot(1:numElec)= sqrt ((vx(1:numElec).^2)+(vy(1:numElec).^2));
+    vtot(1:numElec)= sqrt((vx(1:numElec).^2)+(vy(1:numElec).^2));
     
     %Apply boundary conditions 
     for check = 1:numElec
@@ -114,6 +113,7 @@ while t < tTot
         
         hold on;
     end 
+    pause(0.01);
     
     %Plot Averge Temprature in the system
     subplot (2,1,2)
@@ -122,26 +122,24 @@ while t < tTot
     eTemp(:,intCNT) = mean(allT);
      
     plot(Time,eTemp,"r");
-    title('Averge Temp'),xlabel('Time (s)', 'FontSize', 10), ylabel('Temp (K)', 'FontSize', 10), ylim([299,301]); 
+    title('Averge Temp'),xlabel('Time (s)', 'FontSize', 10), ylabel('Temp (K)', 'FontSize', 10),ylim([299,301]);
     hold on;
     intCNT = intCNT +1; 
 
 end 
-
 %% Simulation 2 - Collisions with Mean Free Path (MFP)
 % Jinseng Vanderkloot 101031534
 %% 
-%The purpose of this simulation is to allow the electrons to scatter as if
-%making contact with another electron. This is done by randomizing the
-%velocity in x and y when a randomly generated value is less then the
-%probability of scattering. The temperature of the systems is monitored over
-%time as the velocities of the particles will undergo net change. The Mean
-%free path and mean time between collisions is also tracked (about the same
-%but one is distance and the other is time). A histogram is produced to
-%show the distribution of the velocities. Need to fix issue with temp
-%starting at about 600K but its noramlises towards to appropriate 300K
-%value as time continues. 
-
+% The purpose of this simulation is to allow the electrons to scatter as 
+% if making contact with another electron. This is done by randomizing
+% the velocity in x and y when a randomly generated value is less then 
+% the probability of scattering. The temperature of the systems is 
+% monitored over time as the velocities of the particles will undergo 
+% net change. This change is over a normal distribution so the net 
+% temperature should equal the set temperature The Mean free path and mean 
+% time between collisions is also tracked (about the same metric but one 
+% is distance and the other is time). A histogram is produced to show the 
+% distribution of the velocities.
 %% S2 Initialization of electron values
 
 clc
@@ -166,7 +164,7 @@ vt=sqrt((2*kb*Temp)/mn);        % Sim in 2D so (2*kb*Temp), 3D is (3*kb*Temp)
 numElec = 1000;                 %Number of simulated Electrons 
 numEPlot = 20;                  %Number of plotted Electrons 
 dt = (lArea*wArea);             %Typically 1/100 of region size
-stepsTot = 80;                 %Total amount of steps (1000 was a long simulation) 
+stepsTot = 200;                 %Total amount of steps (1000 was a long simulation) 
 tTot= stepsTot*dt;              %Total Simulation time 
 x = zeros(1,numElec);           %Inital X matrix          
 y = zeros(1,numElec);           %Inital y matrix  
@@ -177,15 +175,15 @@ avgTemp=0;                      %Set average Temp to 0
 
 %Probability of Scatter 
 scatOn = 1;                     %Turn Scatter on (1) or off(0)
-Pscatter = 1-exp(-dt/tmn);      %Scatter Equation 
+Pscatter = 1-exp(-dt/tmn);      %Scatter Equation with tmn 
 tScatter = zeros(1,numElec);    %track scatter for each particle 
 
 %Electron Graph initial
 for cnt = 1:numElec
     x(cnt)=rand()*wArea;
     y(cnt)=rand()*lArea;
-    vx(cnt)=sqrt(vt^2)*randn();  % velocity * Gaussian dist   
-    vy(cnt)=sqrt(vt^2)*randn();  % velocity * Gaussian dist 
+    vx(cnt)=(vt/sqrt(2))*randn();  % velocity * Gaussian dist   
+    vy(cnt)=(vt/sqrt(2))*randn();  % velocity * Gaussian dist 
     %Varience = sqrt(kT/m) - Do we use this? 
     vtot(cnt)= sqrt (vx(cnt)^2)+(vy(cnt)^2);
     colors= rand(numElec,3);     %Random Color for each electron 
@@ -211,8 +209,8 @@ while t < tTot
         %Scatter 
         if scatOn==1
             if Pscatter > rand()
-                vx(check)=sqrt(vt^2 /2)*randn();
-                vy(check)=sqrt(vt^2 /2)*randn();
+                vx(check)=(vt/sqrt(2))*randn();
+                vy(check)=(vt/sqrt(2))*randn();
                 tScatter(check)= 0; %If collision, time goes to 0
             else
                 tScatter(check)= tScatter(check) + dt; %track time increaing while no collision
@@ -255,6 +253,7 @@ while t < tTot
         
         hold on;
     end 
+    pause(0.01);
     
     %Calc Average Temp for all t and Plot 
     subplot (3,1,2)
@@ -263,7 +262,7 @@ while t < tTot
     avgTemp(:,intCNT) = mean(allT);
      
     plot(Time,avgTemp,"r");
-    title('Averge Temp'),xlabel('Time (s)', 'FontSize', 10), ylabel('Temp (K)', 'FontSize', 10), ylim([250,600]); 
+    title('Averge Temp'),xlabel('Time (s)', 'FontSize', 10), ylabel('Temp (K)', 'FontSize', 10), ylim([250,350]); 
     hold on;
     intCNT = intCNT +1; 
     
@@ -276,7 +275,7 @@ while t < tTot
 
     %Mean time between collision  
     Time(:,intCNT) = t;
-    allScat(:,intCNT) = mean(tScatter(:));
+    allScat(:,intCNT) = mean(tScatter(tScatter>0));
     subplot(3,3,8)
     plot(Time,allScat,'r');
     title('Mean Time between Collision'),xlabel('Time (s)', 'FontSize', 10), ylabel('Time(s)', 'FontSize', 10);
@@ -284,24 +283,36 @@ while t < tTot
    
     %Mean Free Path over time 
     Time(:,intCNT) = t;
-    mfp(:,intCNT) = mean(tScatter(:))*mean(vtot(:));
+    mfp(:,intCNT) = mean(tScatter(tScatter>0))*mean(vtot(tScatter>0));
     subplot(3,3,9)
     plot(Time,mfp,'r');
-    title('Mean Free Path '),xlabel('Time (s)', 'FontSize', 10), ylabel('Time(s)', 'FontSize', 10);
+    title('Mean Free Path '),xlabel('Time (s)', 'FontSize', 10), ylabel('Distance(m)', 'FontSize', 10);
     hold on;
     
 end 
 
+%% 
+% From the results, the average temprature remains the same over time 
+% because the xy velocities of a single electron is randomized over a 
+% normal distribution therefore the average velocity and temprature over 
+% all electron will be around the same values set (300K and 1.87e-5 m/s)
+%% 
+% The average mean free path over time increases to the appriximate value 
+% calculated in Simulation 1 of 3.74e-8.The mean time between collision 
+% is about the same value as set for the probability of scattering as 
+% tmn = 0.2e-12. 
 %% Simulation 3 - Enhancements  
 % Jinseng Vanderkloot 101031534
 %% 
-%Simulation 3 addssolid blocks which electrons will bounce when making
-%contact. The electrons will continue to scatter. There should be some type
-%of re-thermalization electrons make contact with the boxes so a value is
-%added to reduce the velocity therefore reducing temprature. A electron
-%density map and temprature map are displayed. (Some inital values may be
-%changed to reduce simulation time. To improve in the future, use linear
-%indexing). Some bleeding does exsist looking at the density map. 
+% Simulation 3 adds solid blocks into the area and the electons will 
+% "bounce" off the walls when making contact. The electrons will continue 
+% to scatter. There should be some type of re-thermalization for the 
+% electrons which make contact with the boxes so a value is added to 
+% reduce the velocity therefore reducing temprature when contact is make 
+% (vloss). An electron density map and temprature map is displayed. (Some 
+% inital values may be changed to reduce simulation time. To improve in 
+% the future, use linear indexing). Some bleeding or error does exsist 
+% looking at the density map. 
 %% S3 Initialization of electron values
 
 clc
@@ -326,7 +337,7 @@ vt=sqrt((2*kb*Temp)/mn);        % Sim in 2D so (2*kb*Temp), 3D is (3*kb*Temp)
 numElec = 1000;                  %Number of simulated Electrons 
 numEPlot = 40;                  %Number of plotted Electrons 
 dt = (lArea*wArea);           %Typically 1/100 of region size
-stepsTot = 50;                 %Total amount of steps (1000 was a long simulation) 
+stepsTot = 100;                 %Total amount of steps (1000 was a long simulation) 
 tTot= stepsTot*dt;              %Total Simulation time 
 x = zeros(1,numElec);           %Inital X matrix          
 y = zeros(1,numElec);           %Inital y matrix  
@@ -357,8 +368,8 @@ for cnt = 1:numElec
         x(cnt)=rand()*wArea;
         y(cnt)=rand()*lArea;
     end
-    vx(cnt)=sqrt(vt^2)*randn();  % velocity * Gaussian dist   
-    vy(cnt)=sqrt(vt^2)*randn();  % velocity * Gaussian dist 
+    vx(cnt)=(vt/sqrt(2))*randn();  % velocity * Gaussian dist   
+    vy(cnt)=(vt/sqrt(2))*randn();  % velocity * Gaussian dist 
     %Varience = sqrt(kT/m) - Do we use this? 
     vtot(cnt)= sqrt (vx(cnt)^2)+(vy(cnt)^2);
     colors= rand(numElec,3);
@@ -386,8 +397,8 @@ while t < tTot
         %Scatter 
         if scatOn==1
             if Pscatter > rand()
-                vx(check)=sqrt(vt^2 /2)*randn();
-                vy(check)=sqrt(vt^2 /2)*randn();
+                vx(check)=(vt/sqrt(2))*randn();
+                vy(check)=(vt/sqrt(2))*randn();
                 tScatter(check)= 0; %If collision, time goes to 0
             else
                 tScatter(check)= tScatter(check) + dt; %track time increaing while no collision
@@ -477,8 +488,12 @@ end
 %% Simulation 4 - Enhancements - Injection
 % JinsengVanderkloot - 101031534
 %% 
-%Section 3-2 has the electrons injected from one point and another box is
-%added. (Some value are changed or reduced to decrease simulation times)
+% Simulation 4 has the electrons injected from one point and another box 
+% is added compared to simulation 3. The injection is done from the left 
+% side of the area. The velocity from injection point is influenced to 
+% travel in the right direction towards the gap (as if forceing them into 
+% the material). Once they are injected, they continue to scatter.
+% (Some value are changed or reduced to decrease simulation times)
 %% S4 Initialization of individual electron values
 clc
 clear all 
@@ -497,10 +512,10 @@ lArea = 100e-9;
 %Thermal Velocity (Question 1.A) 
 vt=sqrt((2*kb*Temp)/mn);        % Sim in 2D so (2*kb*Temp), 3D is (3*kb*Temp)
 %% S4 Electrons position and velocity arrays
-numElec = 50;                   %Number of simulated Electrons 
-numEPlot = 50;                  %Number of plotted Electrons 
+numElec = 55;                   %Number of simulated Electrons 
+numEPlot = 55;                  %Number of plotted Electrons 
 dt = (lArea*wArea);             %Typically 1/100 of region size
-stepsTot = 120;                 %Total amount of steps (1000 was a long simulation) 
+stepsTot = 130;                 %Total amount of steps (1000 was a long simulation) 
 tTot= stepsTot*dt;              %Total Simulation time 
 x = zeros(1,numElec);           %Inital X matrix          
 y = zeros(1,numElec);           %Inital y matrix  
@@ -550,8 +565,8 @@ while t < tTot
     if intCNT <= numElec
         %Add a velocity for injected electron but have it dominate in the y
         %direction to go towards the gap 
-        vx(intCNT)=0.9*sqrt(vt^2)*abs(randn());  % velocity * Gaussian dist 
-        vy(intCNT)=0.1*sqrt(vt^2)*randn();  % velocity * Gaussian dist 
+        vx(intCNT)=0.9*(vt/sqrt(2))*abs(randn());  % velocity * Gaussian dist 
+        vy(intCNT)=0.1*(vt/sqrt(2))*randn();  % velocity * Gaussian dist 
         vtot(intCNT)= sqrt (vx(intCNT)^2)+(vy(intCNT)^2);
     end 
 
@@ -565,8 +580,8 @@ while t < tTot
         if scatOn==1
             if Pscatter > rand()
                 if vx ~= 0
-                vx(check)=sqrt(vt^2 /2)*randn();
-                vy(check)=sqrt(vt^2 /2)*randn();
+                vx(check)=(vt/sqrt(2))*randn();
+                vy(check)=(vt/sqrt(2))*randn();
                 end
             end
         end

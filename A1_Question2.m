@@ -1,17 +1,17 @@
-%% Assignment 1 - Simulation 2
-% Collisions with Mean Free Path (MFP)
+%% Simulation 2 - Collisions with Mean Free Path (MFP)
 % Jinseng Vanderkloot 101031534
 %% 
-%The purpose of this simulation is to allow the electrons to scatter as if
-%making contact with another electron. This is done by randomizing the
-%velocity in x and y when a randomly generated value is less then the
-%probability of scattering. The temperature of the systems is monitored over
-%time as the velocities of the particles will undergo net change. The Mean
-%free path and mean time between collisions is also tracked (about the same
-%but one is distance and the other is time). A histogram is produced to
-%show the distribution of the velocities.
-
-%% Initialization of electron values
+% The purpose of this simulation is to allow the electrons to scatter as 
+% if making contact with another electron. This is done by randomizing 
+% the velocity in x and y when a randomly generated value is less then 
+% the probability of scattering. The temperature of the systems is 
+% monitored over time as the velocities of the particles will undergo 
+% net change. This change is over a normal distribution so the net 
+% temperature should equal the set temperature The Mean free path and mean
+% time between collisions is also tracked (about the same metric but one 
+% is distance and the other is time). A histogram is produced to show the 
+% distribution of the velocities.
+%% S2 Initialization of electron values
 
 clc
 clear all
@@ -33,9 +33,9 @@ vt=sqrt((2*kb*Temp)/mn);        % Sim in 2D so (2*kb*Temp), 3D is (3*kb*Temp)
 
 %Electrons position and velocity arrays 
 numElec = 1000;                 %Number of simulated Electrons 
-numEPlot = 20;                  %Number of plotted Electrons 
+numEPlot = 200;                  %Number of plotted Electrons 
 dt = (lArea*wArea);             %Typically 1/100 of region size
-stepsTot = 200;                 %Total amount of steps (1000 was a long simulation) 
+stepsTot = 40;                 %Total amount of steps (1000 was a long simulation) 
 tTot= stepsTot*dt;              %Total Simulation time 
 x = zeros(1,numElec);           %Inital X matrix          
 y = zeros(1,numElec);           %Inital y matrix  
@@ -53,13 +53,13 @@ tScatter = zeros(1,numElec);    %track scatter for each particle
 for cnt = 1:numElec
     x(cnt)=rand()*wArea;
     y(cnt)=rand()*lArea;
-    vx(cnt)=sqrt(vt^2)*randn();  % velocity * Gaussian dist   
-    vy(cnt)=sqrt(vt^2)*randn();  % velocity * Gaussian dist 
+    vx(cnt)=(vt/sqrt(2))*randn();  % velocity * Gaussian dist   
+    vy(cnt)=(vt/sqrt(2))*randn();  % velocity * Gaussian dist 
     %Varience = sqrt(kT/m) - Do we use this? 
-    vtot(cnt)= sqrt (vx(cnt)^2)+(vy(cnt)^2);
+    vtot(cnt)= sqrt(vx(cnt)^2)+(vy(cnt)^2);
     colors= rand(numElec,3);     %Random Color for each electron 
 end
-%% Main Loop 
+%% S2 Main Loop 
 t=0;
 intCNT = 1; %Counter with time
 while t < tTot
@@ -80,8 +80,8 @@ while t < tTot
         %Scatter 
         if scatOn==1
             if Pscatter > rand()
-                vx(check)=sqrt(vt^2 /2)*randn();
-                vy(check)=sqrt(vt^2 /2)*randn();
+                vx(check)=(vt/sqrt(2))*randn();
+                vy(check)=(vt/sqrt(2))*randn();
                 tScatter(check)= 0; %If collision, time goes to 0
             else
                 tScatter(check)= tScatter(check) + dt; %track time increaing while no collision
@@ -133,20 +133,18 @@ while t < tTot
     avgTemp(:,intCNT) = mean(allT);
      
     plot(Time,avgTemp,"r");
-    title('Averge Temp'),xlabel('Time (s)', 'FontSize', 10), ylabel('Temp (K)', 'FontSize', 10), ylim([250,600]); 
+    title('Averge Temp'),xlabel('Time (s)', 'FontSize', 10), ylabel('Temp (K)', 'FontSize', 10), ylim([250,350]); 
     hold on;
     intCNT = intCNT +1; 
     
     %Histogram of velocities over time 
-    if intCNT > (stepsTot-5)
-        subplot(3,3,7)
-        histogram([vtot(:)],30)
-        title('Velocity Histgram'),xlabel('Velocity (m/s)', 'FontSize', 10), ylabel('Number of Particles', 'FontSize', 10);
-    end
+    subplot(3,3,7)
+    histogram([vtot(:)],30)
+    title('Velocity Histgram'),xlabel('Velocity (m/s)', 'FontSize', 10), ylabel('Number of Particles', 'FontSize', 10);
 
     %Mean time between collision  
     Time(:,intCNT) = t;
-    allScat(:,intCNT) = mean(tScatter(:));
+    allScat(:,intCNT) = mean(tScatter(tScatter>0));
     subplot(3,3,8)
     plot(Time,allScat,'r');
     title('Mean Time between Collision'),xlabel('Time (s)', 'FontSize', 10), ylabel('Time(s)', 'FontSize', 10);
@@ -154,10 +152,21 @@ while t < tTot
    
     %Mean Free Path over time 
     Time(:,intCNT) = t;
-    mfp(:,intCNT) = mean(tScatter(:))*mean(vtot(:));
+    mfp(:,intCNT) = (mean(tScatter(tScatter>0)))*mean(vtot(tScatter>0));
     subplot(3,3,9)
     plot(Time,mfp,'r');
     title('Mean Free Path '),xlabel('Time (s)', 'FontSize', 10), ylabel('Time(s)', 'FontSize', 10);
     hold on;
     
 end 
+%% 
+% From the results, the average temprature remains the same over time 
+% because the xy velocities of a single electron is randomized over a 
+% normal distribution therefor the average velocity and temprature over 
+% all electron will be around the same values set (300K and 1.87e-5 m/s)
+
+%%
+% The average mean free path over time increases to the appriximate value 
+% calculated in Simulation 1 of 3.74e-8.The mean time between collision is 
+% about the same value as set for the probability of scattering as 
+% tmn = 0.2e-12. 

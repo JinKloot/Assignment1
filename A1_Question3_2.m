@@ -1,8 +1,12 @@
 %% Simulation 4 - Enhancements - Injection
 % JinsengVanderkloot - 101031534
 %% 
-%Section 3-2 has the electrons injected from one point and another box is
-%added. (Some value are changed or reduced to decrease simulation times)
+% Simulation 4 has the electrons injected from one point and another box 
+% is added compared to simulation 3. The injection is done from the left 
+% side of the area. The velocity from injection point is influenced to 
+% travel in the right direction towards the gap (as if forceing them into 
+% the material). Once they are injected, they continue to scatter.
+% (Some value are changed or reduced to decrease simulation times)
 %% S4 Initialization of individual electron values
 clc
 clear all 
@@ -74,8 +78,8 @@ while t < tTot
     if intCNT <= numElec
         %Add a velocity for injected electron but have it dominate in the y
         %direction to go towards the gap 
-        vx(intCNT)=0.9*sqrt(vt^2)*abs(randn());  % velocity * Gaussian dist 
-        vy(intCNT)=0.1*sqrt(vt^2)*randn();  % velocity * Gaussian dist 
+        vx(intCNT)=0.9*(vt/sqrt(2))*abs(randn());  % velocity * Gaussian dist 
+        vy(intCNT)=0.1*(vt/sqrt(2))*randn();  % velocity * Gaussian dist 
         vtot(intCNT)= sqrt (vx(intCNT)^2)+(vy(intCNT)^2);
     end 
 
@@ -89,8 +93,8 @@ while t < tTot
         if scatOn==1
             if Pscatter > rand()
                 if vx ~= 0
-                vx(check)=sqrt(vt^2 /2)*randn();
-                vy(check)=sqrt(vt^2 /2)*randn();
+                vx(check)=(vt/sqrt(2))*randn();
+                vy(check)=(vt/sqrt(2))*randn();
                 end
             end
         end
